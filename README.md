@@ -1,7 +1,7 @@
 # Spring Security Study
 
 This project is a personal study and reference implementation of Spring Security.
-It is based on concepts and practices explained in Spring Security: Start Here by Laurentiu Spilca, but goes beyond simply following the book.
+It is based on concepts and practices explained in *[Spring Security: Start Here](https://www.manning.com/books/spring-start-here)* by *Laurentiu Spilca*, but goes beyond simply following the book.
 
 The goal of this project is twofold:
 - To deepen my understanding of Spring Security by implementing the security layer in a clean, structured way.
