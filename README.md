@@ -11,8 +11,10 @@ While inspired by the book, the implementation reflects my own design decisions,
 
 ## Technical Highlights
 - **Spring Boot + Spring Security**: Core setup for authentication and authorization.
-- **Custom UserDetailsService**: Secure user management with persistence.
+- **Custom UserDetailsService**: Abstracted user retrieval from persistence layer.
 - **Role-based Access Control (RBAC)**: Fine-grained access restrictions across dummy business domains.
 - **JWT-based Authentication**: Stateless security layer for API endpoints.
 - **OAuth 2 Login**: Integration with an external identity provider for modern authentication.
 - **Clean Architecture**: Organized structure for clarity and future reusability.
+
+> *Status: In progress* — this repository evolves as I implement each of the planned features and patterns from my Spring Security study.
