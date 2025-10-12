@@ -13,7 +13,7 @@ public class LoginService {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public void perform(LoginRequest loginRequest) {
+    public void execute(LoginRequest loginRequest) {
         //TODO: add login logic incorporating authenticationManager (see ChatGPT chat)
         //return JWT token?
     }
