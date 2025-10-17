@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -14,9 +15,10 @@ import java.util.Set;
 public class User {
 
     @Builder
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public User(String username, String password, Set<Role> roles) {
+        this.username = Objects.requireNonNull(username, "username must not be null");
+        this.password = Objects.requireNonNull(password, "password must not be null");
+        this.roles = roles;
     }
 
     @Id

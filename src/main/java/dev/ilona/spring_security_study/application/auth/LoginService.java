@@ -1,20 +1,27 @@
 package dev.ilona.spring_security_study.application.auth;
 
 import dev.ilona.spring_security_study.api.auth.request.LoginRequest;
+import dev.ilona.spring_security_study.security.UserPrincipal;
+import dev.ilona.spring_security_study.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class LoginService {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    @Transactional
-    public void execute(LoginRequest loginRequest) {
-        //TODO: add login logic incorporating authenticationManager (see ChatGPT chat)
-        //TODO: return JWT token?
+    public String execute(LoginRequest request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.username(), request.password())
+        );
+
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        return jwtService.generateToken(userPrincipal.getUser());
     }
 }

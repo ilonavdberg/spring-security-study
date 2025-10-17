@@ -1,6 +1,7 @@
 package dev.ilona.spring_security_study.security;
 
 import dev.ilona.spring_security_study.domain.user.model.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 public class UserPrincipal implements UserDetails {
 
+    @Getter
     private final User user;
 
     private UserPrincipal(User user) {
