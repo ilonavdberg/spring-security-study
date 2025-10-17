@@ -17,6 +17,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
         loginService.execute(request);
-        return null; //TODO: return JWT token in uri?
+        return null; //TODO: return JWT token?
     }
 }

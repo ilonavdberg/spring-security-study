@@ -15,6 +15,6 @@ public class LoginService {
     @Transactional
     public void execute(LoginRequest loginRequest) {
         //TODO: add login logic incorporating authenticationManager (see ChatGPT chat)
-        //return JWT token?
+        //TODO: return JWT token?
     }
 }
