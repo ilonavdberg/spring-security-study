@@ -4,7 +4,6 @@ import dev.ilona.spring_security_study.domain.user.model.Role;
 import dev.ilona.spring_security_study.domain.user.model.User;
 import dev.ilona.spring_security_study.domain.user.repository.RoleRepository;
 import dev.ilona.spring_security_study.domain.user.repository.UserRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +18,7 @@ public class DataInitializer {
     public void addUser() {
         User user = User.builder()
                 .username("test_user")
-                .password("password")
+                .password("password", passwordEncoder)
                 .build();
 
         userRepository.save(user);

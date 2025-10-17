@@ -24,12 +24,11 @@ public class UserService {
             throw new UsernameAlreadyExistsException((request.username()));
         }
 
-        Role role = roleService.getGeneralUserRole();
-
         User user = User.builder()
                 .username(request.username())
-                .password(passwordEncoder.encode(request.password()))
-                .role(role)
+                .password(request.password())
+                .passwordEncoder(passwordEncoder)
+                .role(roleService.getGeneralUserRole())
                 .build();
 
         userRepository.save(user);

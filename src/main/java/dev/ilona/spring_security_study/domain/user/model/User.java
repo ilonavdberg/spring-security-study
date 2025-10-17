@@ -2,6 +2,7 @@ package dev.ilona.spring_security_study.domain.user.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -11,15 +12,7 @@ import java.util.Set;
 @Table(name = "users")
 @NoArgsConstructor
 @Getter
-@Setter
 public class User {
-
-    @Builder
-    public User(String username, String password, @Singular Set<Role> roles) {
-        this.username = Objects.requireNonNull(username, "username must not be null");
-        this.password = Objects.requireNonNull(password, "password must not be null");
-        if (roles != null) this.roles.addAll(roles);
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,4 +31,30 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @Builder
+    public User(String username, String password, @Singular Set<Role> roles, PasswordEncoder passwordEncoder) {
+        setUsername(username);
+        setPassword(password, passwordEncoder);
+        setRoles(roles);
+    }
+
+    public void setUsername(String username) {
+        this.username = Objects.requireNonNull(username, "username must not be null");
+    }
+
+    public void setPassword(String password, PasswordEncoder passwordEncoder) {
+        Objects.requireNonNull(passwordEncoder, "password encoder must be set for encoding the password.");
+        this.password = passwordEncoder.encode(Objects.requireNonNull(password, "password must not be null"));
+    }
+
+    public void setRoles(Set<Role> roles) {
+        if (roles != null && !roles.isEmpty()) {
+            this.roles.addAll(roles);
+        }
+
+        if (this.roles.isEmpty()) {
+            throw new IllegalArgumentException("At least one role must be set.");
+        }
+    }
 }
