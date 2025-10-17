@@ -35,7 +35,7 @@ public class User {
     @Builder
     public User(String username, String password, @Singular Set<Role> roles, PasswordEncoder passwordEncoder) {
         setUsername(username);
-        setPassword(password, passwordEncoder);
+        encodeAndSetPassword(password, passwordEncoder);
         setRoles(roles);
     }
 
@@ -43,7 +43,7 @@ public class User {
         this.username = Objects.requireNonNull(username, "username must not be null");
     }
 
-    public void setPassword(String password, PasswordEncoder passwordEncoder) {
+    public void encodeAndSetPassword(String password, PasswordEncoder passwordEncoder) {
         Objects.requireNonNull(passwordEncoder, "password encoder must be set for encoding the password.");
         this.password = passwordEncoder.encode(Objects.requireNonNull(password, "password must not be null"));
     }
