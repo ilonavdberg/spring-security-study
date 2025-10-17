@@ -1,4 +1,4 @@
-package dev.ilona.spring_security_study.application.auth;
+package dev.ilona.spring_security_study.domain.user.service;
 
 import dev.ilona.spring_security_study.api.auth.request.LoginRequest;
 import dev.ilona.spring_security_study.security.UserPrincipal;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LoginService {
+public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public String execute(LoginRequest request) {
+    public String login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );

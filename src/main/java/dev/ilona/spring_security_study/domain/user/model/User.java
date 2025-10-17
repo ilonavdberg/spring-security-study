@@ -15,10 +15,10 @@ import java.util.Set;
 public class User {
 
     @Builder
-    public User(String username, String password, Set<Role> roles) {
+    public User(String username, String password, @Singular Set<Role> roles) {
         this.username = Objects.requireNonNull(username, "username must not be null");
         this.password = Objects.requireNonNull(password, "password must not be null");
-        this.roles = roles;
+        if (roles != null) this.roles.addAll(roles);
     }
 
     @Id
