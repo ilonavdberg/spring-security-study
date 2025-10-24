@@ -1,4 +1,4 @@
-package dev.ilona.spring_security_study.api.auth.request;
+package dev.ilona.spring_security_study.api.user;
 
 import jakarta.validation.constraints.Pattern;
 

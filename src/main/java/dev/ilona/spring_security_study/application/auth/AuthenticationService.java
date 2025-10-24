@@ -1,6 +1,6 @@
 package dev.ilona.spring_security_study.application.auth;
 
-import dev.ilona.spring_security_study.api.auth.request.LoginRequest;
+import dev.ilona.spring_security_study.api.auth.LoginRequest;
 import dev.ilona.spring_security_study.security.UserPrincipal;
 import dev.ilona.spring_security_study.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,5 @@
-package dev.ilona.spring_security_study.api.auth.controller;
+package dev.ilona.spring_security_study.api.user;
 
-import dev.ilona.spring_security_study.api.auth.request.LoginRequest;
-import dev.ilona.spring_security_study.api.auth.request.UserRegistrationRequest;
-import dev.ilona.spring_security_study.application.auth.AuthenticationService;
 import dev.ilona.spring_security_study.application.user.UserManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/users")
 @RequiredArgsConstructor
-public class AuthController {
+public class UserController {
 
-    private final UserManagementService userService;
-    private final AuthenticationService authenticationService;
+    private final UserManagementService userManagementService;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody UserRegistrationRequest request) {
-        String username = userService.registerUser(request);
+        String username = userManagementService.registerUser(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -35,11 +30,5 @@ public class AuthController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
-        String token = authenticationService.login(request);
-        return ResponseEntity.ok(Map.of("token", token));
     }
 }

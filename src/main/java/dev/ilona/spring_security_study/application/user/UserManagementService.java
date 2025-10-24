@@ -1,6 +1,6 @@
 package dev.ilona.spring_security_study.application.user;
 
-import dev.ilona.spring_security_study.api.auth.request.UserRegistrationRequest;
+import dev.ilona.spring_security_study.api.user.UserRegistrationRequest;
 import dev.ilona.spring_security_study.domain.user.User;
 import dev.ilona.spring_security_study.domain.user.UserService;
 import lombok.RequiredArgsConstructor;
