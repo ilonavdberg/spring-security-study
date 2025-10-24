@@ -1,6 +1,5 @@
-package dev.ilona.spring_security_study.domain.user.repository;
+package dev.ilona.spring_security_study.domain.user;
 
-import dev.ilona.spring_security_study.domain.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

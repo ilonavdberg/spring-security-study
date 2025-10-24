@@ -1,7 +1,7 @@
 package dev.ilona.spring_security_study.security;
 
-import dev.ilona.spring_security_study.domain.user.model.User;
-import dev.ilona.spring_security_study.domain.user.repository.UserRepository;
+import dev.ilona.spring_security_study.domain.user.User;
+import dev.ilona.spring_security_study.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

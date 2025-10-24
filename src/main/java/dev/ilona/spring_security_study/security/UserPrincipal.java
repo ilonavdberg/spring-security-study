@@ -1,6 +1,6 @@
 package dev.ilona.spring_security_study.security;
 
-import dev.ilona.spring_security_study.domain.user.model.User;
+import dev.ilona.spring_security_study.domain.user.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +24,7 @@ public class UserPrincipal implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(role.getName().getValue()))
                 .toList();
     }
 

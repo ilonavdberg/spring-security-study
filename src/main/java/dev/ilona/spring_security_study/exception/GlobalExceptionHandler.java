@@ -1,6 +1,7 @@
 package dev.ilona.spring_security_study.exception;
 
 import dev.ilona.spring_security_study.exception.exceptions.RequiredRoleNotInDatabaseException;
+import dev.ilona.spring_security_study.exception.exceptions.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -17,6 +18,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", "Invalid username or password"));
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleUsernameAlreadyExistsException(UsernameAlreadyExistsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", exception.getMessage()));
     }
 
     @ExceptionHandler(RequiredRoleNotInDatabaseException.class)

@@ -5,7 +5,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,11 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter  extends OncePerRequestFilter {
 
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -33,11 +36,17 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         JwtAuthenticationToken authenticationToken = new JwtAuthenticationToken(token);
 
         try {
+            AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
             Authentication authenticated = authenticationManager.authenticate(authenticationToken);
             SecurityContextHolder.getContext().setAuthentication(authenticated);
         } catch (AuthenticationException exception) {
             SecurityContextHolder.clearContext();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+            return;
+        } catch (Exception exception) {
+            log.error("Internal authentication setup error: failed to obtain AuthenticationManager");
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal authentication error. Please contact support.");
             return;
         }
 

@@ -1,4 +1,4 @@
-package dev.ilona.spring_security_study.domain.user.service;
+package dev.ilona.spring_security_study.application.auth;
 
 import dev.ilona.spring_security_study.api.auth.request.LoginRequest;
 import dev.ilona.spring_security_study.security.UserPrincipal;

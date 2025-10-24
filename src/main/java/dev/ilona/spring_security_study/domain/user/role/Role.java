@@ -1,4 +1,4 @@
-package dev.ilona.spring_security_study.domain.user.model;
+package dev.ilona.spring_security_study.domain.user.role;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,5 +17,18 @@ public class Role {
     private Long id;
 
     @Column(name = "name", nullable = false, unique = true)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleName name;
+
+    @Getter
+    public enum RoleName {
+        GENERAL_USER("ROLE_USER"),
+        ADMIN("ROLE_ADMIN");
+
+        private final String value;
+
+        RoleName(String value) {
+            this.value = value;
+        }
+    }
 }

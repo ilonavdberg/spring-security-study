@@ -1,6 +1,6 @@
 package dev.ilona.spring_security_study.security.jwt;
 
-import dev.ilona.spring_security_study.domain.user.model.User;
+import dev.ilona.spring_security_study.domain.user.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
