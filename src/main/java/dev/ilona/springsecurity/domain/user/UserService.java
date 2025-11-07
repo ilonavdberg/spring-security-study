@@ -15,14 +15,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User createUser(String username, String rawPassword, Role role) {
+    public User createUser(String username, String rawPassword, String email, Role role) {
         if (userRepository.existsByUsername(username)) {
             throw new UsernameAlreadyExistsException((username));
         }
+        //TODO: add check for email uniqueness
 
         User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(rawPassword))
+                .email(email)
                 .role(role)
                 .build();
 

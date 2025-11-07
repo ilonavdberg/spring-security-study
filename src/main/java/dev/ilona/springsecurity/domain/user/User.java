@@ -2,6 +2,7 @@ package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -20,6 +21,9 @@ public class User {
     public static class Constraints {
         public static final String USERNAME_PATTERN_REGEXP = "\\S{8,}";
         public static final String USERNAME_PATTERN_MESSAGE = "Username must be at least 8 characters long and must not contain whitespace.";
+
+        public static final String EMAIL_EMAIL_MESSAGE = "Email address must be valid.";
+        public static final String EMAIL_NOT_BLANK_MESSAGE = "Email address must be provided";
 
         //Note: the pattern validation constraints apply to the raw password only; in the entity the encoded password will be stored
         public static final String PASSWORD_PATTERN_REGEXP = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
@@ -40,6 +44,11 @@ public class User {
     )
     private String username;
 
+    @Column(name = "email", nullable = false, unique = true, updatable = false)
+    @Email(message = Constraints.EMAIL_EMAIL_MESSAGE)
+    @NotBlank(message = Constraints.EMAIL_NOT_BLANK_MESSAGE)
+    private String email;
+
     @Column(name = "password", nullable = false)
     @NotBlank(message = Constraints.PASSWORD_NOT_BLANK_MESSAGE)
     private String password;
@@ -54,9 +63,10 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @Builder(access = AccessLevel.PACKAGE)
-    public User(String username, String password, @Singular Set<Role> roles) {
+    public User(String username, String password, String email, @Singular Set<Role> roles) {
         setUsername(username);
         setPassword(password);
+        setEmail(email);
         setRoles(roles);
     }
 }

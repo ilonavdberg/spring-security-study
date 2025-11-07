@@ -2,6 +2,7 @@ package dev.ilona.springsecurity.security;
 
 import dev.ilona.springsecurity.security.jwt.JwtAuthenticationFilter;
 import dev.ilona.springsecurity.security.jwt.JwtAuthenticationProvider;
+import dev.ilona.springsecurity.security.oauth2.Oauth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -55,9 +57,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/oauth2/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .anyRequest().authenticated())
+                .oauth2Login(oauth2 -> oauth2.successHandler(oauth2SuccessHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
