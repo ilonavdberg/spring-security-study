@@ -29,7 +29,7 @@ public class DataInitializer {
     private final RoleService roleService;
     private final RoleRepository roleRepository;
 
-//    @PostConstruct
+    @PostConstruct
     public void addRole() {
         Role role = new Role();
         role.setName(Role.RoleName.ROLE_USER);
