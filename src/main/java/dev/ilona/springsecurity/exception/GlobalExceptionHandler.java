@@ -1,5 +1,6 @@
 package dev.ilona.springsecurity.exception;
 
+import dev.ilona.springsecurity.exception.exceptions.DuplicateEmailException;
 import dev.ilona.springsecurity.exception.exceptions.RequiredRoleNotInDatabaseException;
 import dev.ilona.springsecurity.exception.exceptions.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +27,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleUsernameAlreadyExistsException(UsernameAlreadyExistsException exception, HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
         problem.setTitle("Duplicate username not allowed");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ProblemDetail handleDuplicateEmailException(DuplicateEmailException exception, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problem.setTitle("Duplicate email not allowed");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }
