@@ -19,7 +19,7 @@ public class UserManagementService {
     @Transactional
     public String registerUser(UserRegistrationRequest request) {
         Role role = roleService.getGeneralUserRole();
-        User user = userService.createUser(request.username(), request.password(), role);
+        User user = userService.createUser(request.username(), request.password(), request.email(), role);
         return user.getUsername();
     }
 }

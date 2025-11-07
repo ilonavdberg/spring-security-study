@@ -39,6 +39,6 @@ public class DataInitializer {
     //    @PostConstruct
     public void addUser() {
         Role role = roleService.getGeneralUserRole();
-        User user = userService.createUser("test_user", "password", role);
+        User user = userService.createUser("test_user", "password", "test_user@example.com", role);
     }
 }
