@@ -3,7 +3,6 @@ package dev.ilona.springsecurity.application.user;
 import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserService;
-import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,12 @@ public class UserManagementService {
 
     @Transactional
     public String registerUser(UserRegistrationRequest request) {
-        Role role = roleService.getGeneralUserRole();
-        User user = userService.createUser(request.username(), request.password(), request.email(), role);
+        User user = userService.createUser(
+                request.username(),
+                request.password(),
+                request.email(),
+                roleService.getGeneralUserRole()
+        );
         return user.getUsername();
     }
 }
