@@ -1,0 +1,16 @@
+validation:
+  user:
+    username:
+      min-length: 8
+      max-length: 32
+      regex: "\\S+"    # any non-whitespace character
+    password:
+      min-length: 8
+      max-length: 50
+      # Password must contain at least:
+      # - 1 digit [0-9]
+      # - 1 lowercase letter [a-z]
+      # - 1 uppercase letter [A-Z]
+      # - 1 special character [@#$%^&+=]
+      # - no whitespace allowed
+      regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).*$"
