@@ -1,7 +1,8 @@
-package dev.ilona.springsecurity.config.validation.user;
+package dev.ilona.springsecurity.api.user.validation;
 
-import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
+import dev.ilona.springsecurity.api.user.request.UserRegistrationRequest;
 import dev.ilona.springsecurity.config.validation.FieldValidation;
+import dev.ilona.springsecurity.config.validation.UserValidationProperties;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,5 @@
-package dev.ilona.springsecurity.config.validation.user;
+package dev.ilona.springsecurity.config.validation;
 
-import dev.ilona.springsecurity.config.validation.FieldValidation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

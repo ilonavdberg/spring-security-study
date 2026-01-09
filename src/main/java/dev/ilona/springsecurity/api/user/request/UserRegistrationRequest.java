@@ -1,6 +1,6 @@
-package dev.ilona.springsecurity.api.user;
+package dev.ilona.springsecurity.api.user.request;
 
-import dev.ilona.springsecurity.config.validation.user.ValidUser;
+import dev.ilona.springsecurity.api.user.validation.ValidUser;
 
 @ValidUser
 public record UserRegistrationRequest(

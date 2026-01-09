@@ -1,4 +1,4 @@
-package dev.ilona.springsecurity.config.validation.user;
+package dev.ilona.springsecurity.api.user.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

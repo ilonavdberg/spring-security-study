@@ -1,7 +1,7 @@
 package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.config.validation.FieldValidation;
-import dev.ilona.springsecurity.config.validation.user.UserValidationProperties;
+import dev.ilona.springsecurity.config.validation.UserValidationProperties;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
