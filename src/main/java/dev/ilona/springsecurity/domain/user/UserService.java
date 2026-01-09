@@ -12,9 +12,14 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserPolicy userPolicy;
     private final PasswordEncoder passwordEncoder;
 
     public User createUser(String username, String rawPassword, String email, Role role) {
+        userPolicy.assertValidUsername(username);
+        userPolicy.assertValidPassword(rawPassword);
+        userPolicy.assertValidEmail(email);
+
         if (userRepository.existsByUsername(username)) {
             throw new UsernameAlreadyExistsException((username));
         }
