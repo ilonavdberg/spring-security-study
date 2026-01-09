@@ -3,5 +3,10 @@ package dev.ilona.springsecurity.config.validation;
 public record FieldValidation(
     int minLength,
     int maxLength,
-    String regex
-) { }
+    PatternValidation pattern
+) {
+    public record PatternValidation(
+            String regex,
+            String message
+    ) {}
+}
