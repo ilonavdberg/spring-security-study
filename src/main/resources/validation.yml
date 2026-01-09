@@ -5,14 +5,14 @@ validation:
       max-length: 32
       pattern:
         regex: "\\S+"
-        message: "Username must not contain any whitespace"
+        message: "Username must not contain any whitespace."
     password:
       min-length: 8
       max-length: 50
       pattern:
         regex: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).*$"
-        message: "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and no whitespace"
+        message: "Password must contain at least one digit, one lowercase letter, one uppercase letter, one special character, and no whitespace."
     email:
       pattern:
         regex: "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$"
-        message: "Email must be a valid email address"
+        message: "Email must be a valid email address."

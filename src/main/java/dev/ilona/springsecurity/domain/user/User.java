@@ -2,10 +2,8 @@ package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.HashSet;
@@ -18,39 +16,20 @@ import java.util.Set;
 @Getter
 public class User {
 
-    public static class Constraints {
-        public static final String USERNAME_PATTERN_REGEXP = "\\S{8,}";
-        public static final String USERNAME_PATTERN_MESSAGE = "Username must be at least 8 characters long and must not contain whitespace.";
-
-        public static final String EMAIL_EMAIL_MESSAGE = "Email address must be valid.";
-        public static final String EMAIL_NOT_BLANK_MESSAGE = "Email address must be provided";
-
-        //Note: the pattern validation constraints apply to the raw password only; in the entity the encoded password will be stored
-        public static final String PASSWORD_PATTERN_REGEXP = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
-        public static final String PASSWORD_PATTERN_MESSAGE = "Password must be at least 8 characters and contain at least one lowercase letter, one uppercase letter, one number and one special character.";
-        public static final String PASSWORD_NOT_BLANK_MESSAGE = "Password must be provided.";
-
-        public static final String ROLES_NOT_EMPTY_MESSAGE = "At least one role must be set.";
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "username", nullable = false, unique = true, updatable = false)
-    @Pattern(
-            regexp = Constraints.USERNAME_PATTERN_REGEXP,
-            message = Constraints.USERNAME_PATTERN_MESSAGE
-    )
+    @NotBlank(message = "Username must be provided.")
     private String username;
 
     @Column(name = "email", nullable = false, unique = true, updatable = false)
-    @Email(message = Constraints.EMAIL_EMAIL_MESSAGE)
-    @NotBlank(message = Constraints.EMAIL_NOT_BLANK_MESSAGE)
+    @NotBlank(message = "Email address must be provided.")
     private String email;
 
     @Column(name = "password", nullable = false)
-    @NotBlank(message = Constraints.PASSWORD_NOT_BLANK_MESSAGE)
+    @NotBlank(message = "Password must be provided.")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -59,7 +38,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    @NotEmpty(message = Constraints.ROLES_NOT_EMPTY_MESSAGE)
+    @NotEmpty(message = "At least one role must be set.")
     private Set<Role> roles = new HashSet<>();
 
     @Builder(access = AccessLevel.PACKAGE)
