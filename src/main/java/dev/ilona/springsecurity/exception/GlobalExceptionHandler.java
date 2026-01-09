@@ -1,6 +1,7 @@
 package dev.ilona.springsecurity.exception;
 
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEmailException;
+import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import dev.ilona.springsecurity.exception.exceptions.RequiredRoleNotInDatabaseException;
 import dev.ilona.springsecurity.exception.exceptions.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,6 +47,14 @@ public class GlobalExceptionHandler {
         log.error("Critical configuration error: {}", exception.getMessage(), exception);
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred. Please contact support to resolve the issue.");
         problem.setTitle("Server configuration error");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
+    }
+
+    @ExceptionHandler(PolicyViolationException.class)
+    public ProblemDetail handlePolicyViolationException(PolicyViolationException exception, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problem.setTitle("Validation rule violated");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }
