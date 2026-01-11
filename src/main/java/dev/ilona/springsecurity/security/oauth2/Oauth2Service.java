@@ -20,7 +20,7 @@ public class Oauth2Service {
     public User retrieveOrCreateUser(DefaultOAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
         if (email == null) {
-            throw new IllegalArgumentException("OAuth2 provider did not supply a valid email");
+            throw new IllegalArgumentException("OAuth2 provider did not supply an email");
         }
 
         Role role = roleService.getGeneralUserRole();
