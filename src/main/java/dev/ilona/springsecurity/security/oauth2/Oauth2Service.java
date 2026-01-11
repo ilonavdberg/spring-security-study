@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class Oauth2Service {
@@ -21,13 +19,13 @@ public class Oauth2Service {
 
     public User retrieveOrCreateUser(DefaultOAuth2User oAuth2User) {
         String email = oAuth2User.getAttribute("email");
+        if (email == null) {
+            throw new IllegalArgumentException("OAuth2 provider did not supply a valid email");
+        }
 
         Role role = roleService.getGeneralUserRole();
 
-        User user = userRepository.findByEmail(email)
-                // Use email as username because it must be unique
-                // Assign a random password since OAuth2 users don’t log in with a password
-                .orElseGet(() -> userService.createUser(email, UUID.randomUUID().toString(), email, role));
-        return user;
+        return userRepository.findByEmail(email)
+                .orElseGet(() -> userService.createUser(email, role));
     }
 }

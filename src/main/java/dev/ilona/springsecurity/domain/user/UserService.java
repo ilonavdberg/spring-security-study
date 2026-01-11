@@ -15,10 +15,49 @@ public class UserService {
     private final UserPolicy userPolicy;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Creates a new user with password-based authentication.
+     *
+     * @param username    the username chosen by the user
+     * @param rawPassword the plain text password provided by the user
+     * @param email       the user's email address
+     * @param role        the role assigned to the new user
+     * @return the created {@link User} instance
+     */
     public User createUser(String username, String rawPassword, String email, Role role) {
+        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, role);
+    }
+
+    /**
+     * Creates a new OAuth2 user.
+     * <ul>
+     *   <li>Username is set to the email to satisfy Spring Security's {@code UserDetailsService}, which requires a non-null username.</li>
+     *   <li>Password is {@code null} because OAuth2 users do not have a password.</li>
+     *   <li>Email is the actual email of the user.</li>
+     * </ul>
+     *
+     * @param email the user's email, also used as username
+     * @param role  the role assigned to the new user
+     * @return the created {@link User} instance
+     */
+    public User createUser(String email, Role role) {
+        return createUser(AuthenticationMethod.OAUTH2, email, null, email, role);
+    }
+
+    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role role) {
         userPolicy.assertValidUsername(username);
-        userPolicy.assertValidPassword(rawPassword);
         userPolicy.assertValidEmail(email);
+
+        String password = switch (authenticationMethod) {
+            case PASSWORD -> {
+                userPolicy.assertValidPassword(rawPassword);
+                yield passwordEncoder.encode(rawPassword);
+            }
+            case OAUTH2 -> {
+                requireNoPasswordForOauth2(rawPassword);
+                yield null;
+            }
+        };
 
         if (userRepository.existsByUsername(username)) {
             throw new UsernameAlreadyExistsException((username));
@@ -28,12 +67,19 @@ public class UserService {
         }
 
         User user = User.builder()
+                .authenticationMethod(authenticationMethod)
                 .username(username)
-                .password(passwordEncoder.encode(rawPassword))
+                .password(password)
                 .email(email)
                 .role(role)
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public static void requireNoPasswordForOauth2(String password) {
+        if (password != null) {
+            throw new IllegalArgumentException("Password must be null for OAUTH2 authentication.");
+        }
     }
 }
