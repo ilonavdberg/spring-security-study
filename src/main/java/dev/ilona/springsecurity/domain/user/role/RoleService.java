@@ -1,6 +1,6 @@
 package dev.ilona.springsecurity.domain.user.role;
 
-import dev.ilona.springsecurity.exception.exceptions.RequiredRoleNotInDatabaseException;
+import dev.ilona.springsecurity.exception.exceptions.DatabaseIntegrityException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ public class RoleService {
 
     public Role getGeneralUserRole() {
         return roleRepository.findByName(Role.RoleName.ROLE_USER)
-                .orElseThrow(() -> new RequiredRoleNotInDatabaseException("Missing role in database: " + Role.RoleName.ROLE_USER));
+                .orElseThrow(() -> new DatabaseIntegrityException("Missing role in database: " + Role.RoleName.ROLE_USER));
     }
 }
 

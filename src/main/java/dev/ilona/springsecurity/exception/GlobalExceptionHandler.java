@@ -1,9 +1,6 @@
 package dev.ilona.springsecurity.exception;
 
-import dev.ilona.springsecurity.exception.exceptions.DuplicateEmailException;
-import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
-import dev.ilona.springsecurity.exception.exceptions.RequiredRoleNotInDatabaseException;
-import dev.ilona.springsecurity.exception.exceptions.UsernameAlreadyExistsException;
+import dev.ilona.springsecurity.exception.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,26 +23,18 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
-    public ProblemDetail handleUsernameAlreadyExistsException(UsernameAlreadyExistsException exception, HttpServletRequest request) {
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ProblemDetail handleDuplicateEntryException(DuplicateEntryException exception, HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-        problem.setTitle("Duplicate username not allowed");
+        problem.setTitle("Duplicate entry not allowed");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }
 
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ProblemDetail handleDuplicateEmailException(DuplicateEmailException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-        problem.setTitle("Duplicate email not allowed");
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
-    }
-
-    @ExceptionHandler(RequiredRoleNotInDatabaseException.class)
-    public ProblemDetail handleRequiredRoleNotInDatabaseException(RequiredRoleNotInDatabaseException exception, HttpServletRequest request) {
+    @ExceptionHandler(DatabaseIntegrityException.class)
+    public ProblemDetail handleDatabaseIntegrityException(DatabaseIntegrityException exception, HttpServletRequest request) {
         log.error("Critical configuration error: {}", exception.getMessage(), exception);
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred. Please contact support to resolve the issue.");
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred. Please try again later or contact support.");
         problem.setTitle("Server configuration error");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
@@ -54,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PolicyViolationException.class)
     public ProblemDetail handlePolicyViolationException(PolicyViolationException exception, HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-        problem.setTitle("Validation rule violated");
+        problem.setTitle("Business rule violation");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }

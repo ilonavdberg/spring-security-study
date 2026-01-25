@@ -1,9 +1,8 @@
 package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
-import dev.ilona.springsecurity.exception.exceptions.DuplicateEmailException;
+import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
-import dev.ilona.springsecurity.exception.exceptions.UsernameAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -59,10 +58,10 @@ public class UserService {
         };
 
         if (userRepository.existsByUsername(username)) {
-            throw new UsernameAlreadyExistsException((username));
+            throw new DuplicateEntryException("Username already exists: " + username);
         }
         if (userRepository.existsByEmail(email)) {
-            throw new DuplicateEmailException(email);
+            throw new DuplicateEntryException("Email address is already in use: " + email);
         }
 
         User user = User.builder()
