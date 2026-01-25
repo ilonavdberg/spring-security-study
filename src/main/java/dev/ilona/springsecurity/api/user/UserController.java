@@ -1,6 +1,5 @@
-package dev.ilona.springsecurity.api.user.controller;
+package dev.ilona.springsecurity.api.user;
 
-import dev.ilona.springsecurity.api.user.request.UserRegistrationRequest;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

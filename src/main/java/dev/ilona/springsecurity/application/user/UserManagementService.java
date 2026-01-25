@@ -1,6 +1,6 @@
 package dev.ilona.springsecurity.application.user;
 
-import dev.ilona.springsecurity.api.user.request.UserRegistrationRequest;
+import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.role.RoleService;

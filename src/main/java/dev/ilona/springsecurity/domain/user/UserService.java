@@ -2,17 +2,19 @@ package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEmailException;
+import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import dev.ilona.springsecurity.exception.exceptions.UsernameAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static dev.ilona.springsecurity.domain.user.password.PasswordPolicy.assertValidPassword;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserPolicy userPolicy;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -45,12 +47,9 @@ public class UserService {
     }
 
     private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role role) {
-        userPolicy.assertValidUsername(username);
-        userPolicy.assertValidEmail(email);
-
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
-                userPolicy.assertValidPassword(rawPassword);
+                assertValidPassword(rawPassword);
                 yield passwordEncoder.encode(rawPassword);
             }
             case OAUTH2 -> {
@@ -77,9 +76,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public static void requireNoPasswordForOauth2(String password) {
+    private static void requireNoPasswordForOauth2(String password) {
         if (password != null) {
-            throw new IllegalArgumentException("Password must be null for OAUTH2 authentication.");
+            throw new PolicyViolationException("Password must be null for OAUTH2 authentication.");
         }
     }
 }
