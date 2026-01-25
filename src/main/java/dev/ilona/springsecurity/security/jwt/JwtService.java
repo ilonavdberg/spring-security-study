@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -17,17 +19,17 @@ import java.util.function.Function;
 public class JwtService {
 
     @Value("${security.jwt.secret}")
-    private String JWT_SECRET;
+    private String jwtSecret;
 
-    @Value("${security.jwt.expiration}")
-    private Long JWT_EXPIRATION_MS;
+    @Value("${security.jwt.access-token.valid-period}")
+    private Duration expiresAfter;
 
     public String generateToken(User user) {
         return Jwts.builder()
                 .subject(String.valueOf(user.getId()))
                 .claim("roles", user.getRoles())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
+                .expiration(Date.from(Instant.now().plus(expiresAfter)))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -66,6 +68,6 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(JWT_SECRET.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 }

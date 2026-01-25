@@ -1,12 +1,15 @@
 package dev.ilona.springsecurity.domain.user;
 
+import dev.ilona.springsecurity.domain.auth.RefreshToken;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,6 +48,9 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthenticationMethod authenticationMethod;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Builder(access = AccessLevel.PACKAGE)
     public User(AuthenticationMethod authenticationMethod, String username, String password, String email, @Singular Set<Role> roles) {
