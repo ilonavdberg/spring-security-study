@@ -15,8 +15,8 @@ import java.util.Base64;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final SecureRandom secureRandom = new SecureRandom();
-    private final Base64.Encoder base64Encoder = Base64.getUrlEncoder().withoutPadding();
+    private final SecureRandom secureRandom;
+    private final Base64.Encoder base64Encoder;
 
     @Value("${security.jwt.refresh-token.valid-period}")
     private final Duration expiresAfter;
