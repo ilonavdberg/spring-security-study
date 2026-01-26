@@ -39,18 +39,19 @@ public class AuthenticationService {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new BadCredentialsException("Invalid refresh token."));
 
-        try {
-            if (!refreshToken.isValid()) {
-                throw new BadCredentialsException("Refresh token expired.");
-            }
 
-            User user = refreshToken.getUser();
-            RefreshToken newRefreshToken = refreshTokenService.createFor(user);
-            String newAccessToken = jwtService.generateToken(user);
-            return RefreshResponse.of(newRefreshToken.getToken(), newAccessToken);
-        } finally {
+        if (!refreshToken.isValid()) {
             refreshTokenRepository.delete(refreshToken);
+            throw new BadCredentialsException("Refresh token expired.");
         }
+
+        User user = refreshToken.getUser();
+        RefreshToken newRefreshToken = refreshTokenService.createFor(user);
+        String newAccessToken = jwtService.generateToken(user);
+
+        refreshTokenRepository.delete(refreshToken); // Refresh tokens are single-use
+
+        return RefreshResponse.of(newRefreshToken.getToken(), newAccessToken);
     }
 }
 
