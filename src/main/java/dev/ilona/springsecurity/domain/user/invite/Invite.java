@@ -61,7 +61,7 @@ public class Invite {
             throw new InvalidInviteOperationException("This invite cannot be accepted because it has expired.");
         }
         if (this.status != Status.SENT) {
-            throw new InvalidInviteOperationException("This invite cannot be accepted because it is: " + status.name().toLowerCase() + ".");
+            throw new InvalidInviteOperationException("This invite is not in a valid state to be accepted.");
         }
         setStatus(Status.ACCEPTED);
     }
