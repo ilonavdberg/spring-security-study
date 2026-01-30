@@ -14,5 +14,10 @@ public class RoleService {
         return roleRepository.findByName(Role.RoleName.ROLE_USER)
                 .orElseThrow(() -> new DatabaseIntegrityException("Missing role in database: " + Role.RoleName.ROLE_USER));
     }
+
+    public Role getAdminRole() {
+        return roleRepository.findByName(Role.RoleName.ROLE_ADMIN)
+                .orElseThrow(() -> new DatabaseIntegrityException("Missing role in database: " + Role.RoleName.ROLE_ADMIN));
+    }
 }
 

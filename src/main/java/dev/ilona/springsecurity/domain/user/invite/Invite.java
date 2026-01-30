@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,11 +13,17 @@ import java.util.List;
 
 @Entity
 @Table(name = "invites")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Setter(AccessLevel.PACKAGE)
+@Getter
 public class Invite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @NotNull(message = "Status must be provided.")
+    Status status;
 
     @NotBlank(message = "Token must be provided.")
     @Column(name = "token", nullable = false, unique = true, updatable = false)
@@ -39,5 +46,16 @@ public class Invite {
     )
     List<Role> roles = new ArrayList<>();
 
+    @Builder(access = AccessLevel.PACKAGE)
+    public Invite(String token, String email, Instant expirationDate, @Singular List<Role> roles) {
+        setToken(token);
+        setEmail(email);
+        setExpirationDate(expirationDate);
+        setRoles(roles);
+        setStatus(Status.NEW);
+    }
 
+    private enum Status {
+        NEW, SENT, ACCEPTED, REVOKED
+    }
 }
