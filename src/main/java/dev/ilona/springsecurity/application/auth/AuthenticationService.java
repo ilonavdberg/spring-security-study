@@ -2,9 +2,9 @@ package dev.ilona.springsecurity.application.auth;
 
 import dev.ilona.springsecurity.api.auth.LoginRequest;
 import dev.ilona.springsecurity.api.auth.RefreshResponse;
-import dev.ilona.springsecurity.domain.auth.RefreshToken;
-import dev.ilona.springsecurity.domain.auth.RefreshTokenRepository;
-import dev.ilona.springsecurity.domain.auth.RefreshTokenService;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenService;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.security.UserPrincipal;
 import dev.ilona.springsecurity.security.jwt.JwtService;

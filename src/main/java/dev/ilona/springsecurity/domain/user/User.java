@@ -1,6 +1,6 @@
 package dev.ilona.springsecurity.domain.user;
 
-import dev.ilona.springsecurity.domain.auth.RefreshToken;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,9 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -42,7 +40,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
     @NotBlank(message = "Authentication method must be provided.")
     @Column(nullable = false)
@@ -53,7 +51,7 @@ public class User {
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Builder(access = AccessLevel.PACKAGE)
-    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, @Singular Set<Role> roles) {
+    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, @Singular List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);
         setUsername(username);
         setPassword(password);

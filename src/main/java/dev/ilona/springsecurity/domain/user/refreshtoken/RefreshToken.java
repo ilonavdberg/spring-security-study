@@ -1,8 +1,9 @@
-package dev.ilona.springsecurity.domain.auth;
+package dev.ilona.springsecurity.domain.user.refreshtoken;
 
 import dev.ilona.springsecurity.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
@@ -19,14 +20,15 @@ public class RefreshToken {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Token must be provided.")
     @Column(name = "token", nullable = false, unique = true, updatable = false)
     private String token;
 
-    @NotBlank
+    @NotBlank(message = "Expiration date must be provided.")
     @Column(name = "expiration_date", nullable = false, updatable = false)
     private Instant expirationDate;
 
+    @NotNull(message = "User must be provided.")
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;
@@ -38,6 +40,9 @@ public class RefreshToken {
         setUser(user);
     }
 
+    /**
+     * @return {@code true} if this refresh token has not expired.
+     */
     public boolean isValid() {
         return this.expirationDate.isAfter(Instant.now());
     }

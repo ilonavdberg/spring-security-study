@@ -1,4 +1,4 @@
-package dev.ilona.springsecurity.domain.auth;
+package dev.ilona.springsecurity.domain.user.refreshtoken;
 
 import dev.ilona.springsecurity.domain.user.User;
 import lombok.RequiredArgsConstructor;
