@@ -1,6 +1,7 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
+import dev.ilona.springsecurity.exception.exceptions.InvalidInviteOperationException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -54,6 +55,17 @@ public class Invite {
         setRoles(roles);
         setStatus(Status.NEW);
     }
+
+    public void accept() {
+        if (this.expirationDate.isBefore(Instant.now())) {
+            throw new InvalidInviteOperationException("This invite cannot be accepted because it has expired.");
+        }
+        if (this.status != Status.SENT) {
+            throw new InvalidInviteOperationException("This invite cannot be accepted because it is: " + status.name().toLowerCase() + ".");
+        }
+        setStatus(Status.ACCEPTED);
+    }
+
 
     private enum Status {
         NEW, SENT, ACCEPTED, REVOKED

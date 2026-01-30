@@ -4,6 +4,7 @@ import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
+import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class UserManagementService {
     private final UserService userService;
     private final RoleService roleService;
     private final InviteService inviteService;
+    private final InviteRepository inviteRepository;
 
     @Transactional
     public String registerUser(UserRegistrationRequest request) {
@@ -30,9 +32,12 @@ public class UserManagementService {
     }
 
     @Transactional
-    public void createUserFromInvite() {
+    public void createUserFromInvite(String email, String password, String token) {
+        Invite invite = inviteService.resolveInvite(email, token);
+        invite.accept();
+
         //TODO: create Admin User
-        //TODO: update Invite status
+
     }
 
     @Transactional
