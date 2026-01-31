@@ -5,6 +5,7 @@ import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
+import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class UserManagementService {
                 email, // Admins use their email address as their username
                 password,
                 email,
-                invite.getRoles().getFirst() //TODO: change this; currently only works because only one role is set in Invite
+                invite.getRoles().toArray(new Role[0]) // convert List<Role> to Role[] for varargs
         );
         return user.getUuid();
     }

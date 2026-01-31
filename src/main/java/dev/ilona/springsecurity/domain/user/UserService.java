@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static dev.ilona.springsecurity.domain.user.password.PasswordPolicy.assertValidPassword;
 
 @Service
@@ -26,11 +28,11 @@ public class UserService {
      * @param username    the username chosen by the user
      * @param rawPassword the plain text password provided by the user
      * @param email       the user's email address
-     * @param role        the role assigned to the new user
+     * @param roles        the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String username, String rawPassword, String email, Role role) {
-        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, role);
+    public User createUser(String username, String rawPassword, String email, Role... roles) {
+        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, roles);
     }
 
     /**
@@ -42,15 +44,17 @@ public class UserService {
      * </ul>
      *
      * @param email the user's email, also used as username
-     * @param role  the role assigned to the new user
+     * @param roles  the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String email, Role role) {
-        return createUser(AuthenticationMethod.OAUTH2, email, null, email, role);
+    public User createUser(String email, Role... roles) {
+        return createUser(AuthenticationMethod.OAUTH2, email, null, email, roles);
     }
 
-    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role role) {
-        validateEmailForRole(email, role);
+    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role... roles) {
+        for (Role role : roles) {
+            validateEmailForRole(email, role);
+        }
 
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
@@ -75,7 +79,7 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .email(email)
-                .role(role)
+                .roles(List.of(roles))
                 .build();
 
         return userRepository.save(user);

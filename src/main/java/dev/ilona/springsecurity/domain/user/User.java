@@ -56,7 +56,7 @@ public class User {
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Builder(access = AccessLevel.PACKAGE)
-    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, @Singular List<Role> roles) {
+    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);
         setUsername(username);
         setPassword(password);
