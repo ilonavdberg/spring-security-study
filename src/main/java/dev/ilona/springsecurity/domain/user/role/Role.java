@@ -9,8 +9,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 public class Role {
 
     @Id
