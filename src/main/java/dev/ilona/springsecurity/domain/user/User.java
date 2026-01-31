@@ -1,16 +1,16 @@
 package dev.ilona.springsecurity.domain.user;
 
-import dev.ilona.springsecurity.domain.auth.RefreshToken;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -24,11 +24,15 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotBlank(message = "Username must be provided.")
+    @NotNull(message = "UUID is a required field.")
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    private UUID uuid = UUID.randomUUID();
+
+    @NotBlank(message = "Username is a required field.")
     @Column(name = "username", nullable = false, unique = true, updatable = false)
     private String username;
 
-    @NotBlank(message = "Email address must be provided.")
+    @NotBlank(message = "Email address is a required field.")
     @Column(name = "email", nullable = false, unique = true, updatable = false)
     private String email;
 
@@ -42,9 +46,9 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private List<Role> roles = new ArrayList<>();
 
-    @NotBlank(message = "Authentication method must be provided.")
+    @NotBlank(message = "Authentication method is a required field.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthenticationMethod authenticationMethod;
@@ -53,7 +57,7 @@ public class User {
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Builder(access = AccessLevel.PACKAGE)
-    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, @Singular Set<Role> roles) {
+    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);
         setUsername(username);
         setPassword(password);

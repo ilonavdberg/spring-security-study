@@ -47,4 +47,12 @@ public class GlobalExceptionHandler {
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }
+
+    @ExceptionHandler(InvalidInviteOperationException.class)
+    public ProblemDetail handleInvalidInviteException(InvalidInviteOperationException exception, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problem.setTitle("Invalid invite exception");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
+    }
 }

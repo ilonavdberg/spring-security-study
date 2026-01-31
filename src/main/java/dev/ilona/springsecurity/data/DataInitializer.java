@@ -5,9 +5,10 @@ import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.role.RoleRepository;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Temporary data initializer for quickly populating the database with example records.
@@ -38,7 +39,7 @@ public class DataInitializer {
 
 //    @PostConstruct
     public void addUser() {
-        Role role = roleService.getGeneralUserRole();
-        User user = userService.createUser("test_user", "password", "test_user@example.com", role);
+        Role role = roleService.getStandardUserRole();
+        User user = userService.createUser("test_user", "password", "test_user@example.com", List.of(role));
     }
 }

@@ -1,4 +1,4 @@
-package dev.ilona.springsecurity.domain.auth;
+package dev.ilona.springsecurity.domain.user.refreshtoken;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
