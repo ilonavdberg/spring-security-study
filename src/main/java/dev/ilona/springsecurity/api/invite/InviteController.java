@@ -18,8 +18,9 @@ public class InviteController {
     private final UserManagementService userManagementService;
 
     @PostMapping
-    public void sendInvite(@Valid @RequestBody SendInviteRequest request) {
+    public ResponseEntity<Void> sendInvite(@Valid @RequestBody SendInviteRequest request) {
         userManagementService.createAndSendInviteForAdmin(request.email());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{token}/accept")

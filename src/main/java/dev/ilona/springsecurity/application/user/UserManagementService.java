@@ -7,6 +7,7 @@ import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +47,7 @@ public class UserManagementService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN')")
     public void createAndSendInviteForAdmin(String email) {
         Invite invite = inviteService.createInvite(email, roleService.getAdminRole());
         inviteService.submitInviteEmail(invite);

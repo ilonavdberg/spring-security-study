@@ -32,6 +32,6 @@ public class Role {
     @Getter
     public enum RoleName {
         ROLE_USER,
-        ROLE_ADMIN;
+        ROLE_ADMIN
     }
 }
