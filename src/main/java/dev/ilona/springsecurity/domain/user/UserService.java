@@ -4,6 +4,7 @@ import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Value("${application.email.domain}")
+    private final String internalEmailDomain;
 
     /**
      * Creates a new user with password-based authentication.
@@ -46,6 +50,8 @@ public class UserService {
     }
 
     private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role role) {
+        validateEmailForRole(email, role);
+
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
                 assertValidPassword(rawPassword);
@@ -73,6 +79,18 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    public void validateEmailForRole(String email, Role role) {
+        boolean isInternalEmail = email.endsWith(internalEmailDomain);
+
+        if (role.isInternal() && !isInternalEmail) {
+            throw new PolicyViolationException("Internal users must use email addresses ending with: @" + internalEmailDomain);
+        }
+
+        if (!role.isInternal() && isInternalEmail) {
+            throw new PolicyViolationException("External users cannot use email addresses ending with: @" + internalEmailDomain);
+        }
     }
 
     private static void requireNoPasswordForOauth2(String password) {

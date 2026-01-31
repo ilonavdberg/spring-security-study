@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -22,11 +23,15 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotBlank(message = "Username must be provided.")
+    @NotBlank(message = "UUID is a required field.")
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    private UUID uuid;
+
+    @NotBlank(message = "Username is a required field.")
     @Column(name = "username", nullable = false, unique = true, updatable = false)
     private String username;
 
-    @NotBlank(message = "Email address must be provided.")
+    @NotBlank(message = "Email address is a required field.")
     @Column(name = "email", nullable = false, unique = true, updatable = false)
     private String email;
 
@@ -42,7 +47,7 @@ public class User {
     )
     private List<Role> roles = new ArrayList<>();
 
-    @NotBlank(message = "Authentication method must be provided.")
+    @NotBlank(message = "Authentication method is a required field.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthenticationMethod authenticationMethod;

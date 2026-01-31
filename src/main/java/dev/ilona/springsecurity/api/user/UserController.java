@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/users")
@@ -21,12 +22,12 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody UserRegistrationRequest request) {
-        String username = userManagementService.registerUser(request);
+        UUID uuid = userManagementService.registerUser(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/users/{username}")
-                .buildAndExpand(username)
+                .path("/api/users/{uuid}")
+                .buildAndExpand(uuid)
                 .toUri();
 
         return ResponseEntity.created(location).build();

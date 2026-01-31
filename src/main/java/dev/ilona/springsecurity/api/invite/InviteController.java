@@ -3,7 +3,12 @@ package dev.ilona.springsecurity.api.invite;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +23,15 @@ public class InviteController {
     }
 
     @PostMapping("/{token}/accept")
-    public void acceptInvite(@PathVariable String token, @Valid @RequestBody AcceptInviteRequest request) {
-        userManagementService.createUserFromInvite(request.email(), request.password(), token);
+    public ResponseEntity<Void> acceptInvite(@PathVariable String token, @Valid @RequestBody AcceptInviteRequest request) {
+        UUID uuid = userManagementService.createUserFromInvite(request.email(), request.password(), token);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/users/{uuid}")
+                .buildAndExpand(uuid)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 }

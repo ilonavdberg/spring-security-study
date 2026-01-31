@@ -20,15 +20,15 @@ public class RefreshToken {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotBlank(message = "Token must be provided.")
+    @NotBlank(message = "Token is a required field.")
     @Column(name = "token", nullable = false, unique = true, updatable = false)
     private String token;
 
-    @NotBlank(message = "Expiration date must be provided.")
+    @NotBlank(message = "Expiration date is a required field.")
     @Column(name = "expiration_date", nullable = false, updatable = false)
     private Instant expirationDate;
 
-    @NotNull(message = "User must be provided.")
+    @NotNull(message = "User is a required field.")
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private User user;

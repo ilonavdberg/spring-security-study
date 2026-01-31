@@ -23,18 +23,18 @@ public class Invite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @NotNull(message = "Status must be provided.")
+    @NotNull(message = "Status is a required field.")
     Status status;
 
-    @NotBlank(message = "Token must be provided.")
+    @NotBlank(message = "Token is a required field.")
     @Column(name = "token", nullable = false, unique = true, updatable = false)
     String token;
 
-    @NotBlank(message = "Email must be provided.")
+    @NotBlank(message = "Email is a required field.")
     @Column(name = "email", nullable = false, updatable = false)
     String email;
 
-    @NotNull(message = "Expiration date must be provided.")
+    @NotNull(message = "Expiration date is a required field.")
     @Column(name = "expiration_date", nullable = false, updatable = false)
     Instant expirationDate;
 
@@ -54,6 +54,16 @@ public class Invite {
         setExpirationDate(expirationDate);
         setRoles(roles);
         setStatus(Status.NEW);
+    }
+
+    public void validateAllowedToSend() {
+        if (this.status != Status.NEW) {
+            throw new InvalidInviteOperationException("This invite is not in a valid state to be send.");
+        }
+    }
+
+    public void markAsSent() {
+        setStatus(Status.SENT);
     }
 
     public void accept() {

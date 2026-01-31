@@ -23,7 +23,7 @@ public class Oauth2Service {
             throw new IllegalArgumentException("OAuth2 provider did not supply an email");
         }
 
-        Role role = roleService.getGeneralUserRole();
+        Role role = roleService.getStandardUserRole();
 
         return userRepository.findByEmail(email)
                 .orElseGet(() -> userService.createUser(email, role));

@@ -5,7 +5,6 @@ import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.role.RoleRepository;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +37,7 @@ public class DataInitializer {
 
 //    @PostConstruct
     public void addUser() {
-        Role role = roleService.getGeneralUserRole();
+        Role role = roleService.getStandardUserRole();
         User user = userService.createUser("test_user", "password", "test_user@example.com", role);
     }
 }

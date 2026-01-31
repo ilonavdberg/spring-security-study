@@ -10,7 +10,7 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
 
-    public Role getGeneralUserRole() {
+    public Role getStandardUserRole() {
         return roleRepository.findByName(Role.RoleName.ROLE_USER)
                 .orElseThrow(() -> new DatabaseIntegrityException("Missing role in database: " + Role.RoleName.ROLE_USER));
     }
