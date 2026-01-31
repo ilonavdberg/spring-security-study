@@ -31,7 +31,7 @@ public class UserService {
      * @param roles        the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String username, String rawPassword, String email, Role... roles) {
+    public User createUser(String username, String rawPassword, String email, List<Role> roles) {
         return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, roles);
     }
 
@@ -47,11 +47,11 @@ public class UserService {
      * @param roles  the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String email, Role... roles) {
+    public User createUser(String email, List<Role> roles) {
         return createUser(AuthenticationMethod.OAUTH2, email, null, email, roles);
     }
 
-    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, Role... roles) {
+    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, List<Role> roles) {
         for (Role role : roles) {
             validateEmailForRole(email, role);
         }
@@ -79,7 +79,7 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .email(email)
-                .roles(List.of(roles))
+                .roles(roles)
                 .build();
 
         return userRepository.save(user);

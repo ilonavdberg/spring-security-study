@@ -8,6 +8,8 @@ import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Temporary data initializer for quickly populating the database with example records.
  * <p>
@@ -38,6 +40,6 @@ public class DataInitializer {
 //    @PostConstruct
     public void addUser() {
         Role role = roleService.getStandardUserRole();
-        User user = userService.createUser("test_user", "password", "test_user@example.com", role);
+        User user = userService.createUser("test_user", "password", "test_user@example.com", List.of(role));
     }
 }

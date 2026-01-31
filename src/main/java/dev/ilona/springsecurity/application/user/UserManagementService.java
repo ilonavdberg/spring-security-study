@@ -5,12 +5,12 @@ import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
-import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,7 +27,7 @@ public class UserManagementService {
                 request.username(),
                 request.password(),
                 request.email(),
-                roleService.getStandardUserRole()
+                List.of(roleService.getStandardUserRole())
         );
         return user.getUuid();
     }
@@ -40,7 +40,7 @@ public class UserManagementService {
                 email, // Admins use their email address as their username
                 password,
                 email,
-                invite.getRoles().toArray(new Role[0]) // convert List<Role> to Role[] for varargs
+                invite.getRoles()
         );
         return user.getUuid();
     }

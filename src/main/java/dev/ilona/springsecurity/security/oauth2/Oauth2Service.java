@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class Oauth2Service {
@@ -26,6 +28,6 @@ public class Oauth2Service {
         Role role = roleService.getStandardUserRole();
 
         return userRepository.findByEmail(email)
-                .orElseGet(() -> userService.createUser(email, role));
+                .orElseGet(() -> userService.createUser(email, List.of(role)));
     }
 }
