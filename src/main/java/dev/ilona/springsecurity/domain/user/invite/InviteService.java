@@ -20,10 +20,10 @@ public class InviteService {
     private final TokenGenerator tokenGenerator;
 
     @Value("${security.invite.token.valid-period}")
-    private final Duration validPeriod;
+    private Duration validPeriod;
 
     @Value("${security.invite.token.byte-length}")
-    private final int tokenByteLength;
+    private int tokenByteLength;
 
     public Invite createInvite(String email, Role role) {
         userService.validateEmailForRole(email, role);

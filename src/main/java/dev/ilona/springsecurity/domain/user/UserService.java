@@ -20,7 +20,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Value("${application.email.domain}")
-    private final String internalEmailDomain;
+    private String internalEmailDomain;
 
     /**
      * Creates a new user with password-based authentication.

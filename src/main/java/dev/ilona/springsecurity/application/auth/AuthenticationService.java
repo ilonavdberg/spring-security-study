@@ -10,7 +10,6 @@ import dev.ilona.springsecurity.security.UserPrincipal;
 import dev.ilona.springsecurity.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -36,14 +35,7 @@ public class AuthenticationService {
 
     @Transactional
     public RefreshResponse refresh(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
-                .orElseThrow(() -> new BadCredentialsException("Invalid refresh token."));
-
-
-        if (!refreshToken.isValid()) {
-            refreshTokenRepository.delete(refreshToken);
-            throw new BadCredentialsException("Refresh token expired.");
-        }
+        RefreshToken refreshToken = refreshTokenService.resolve(token);
 
         User user = refreshToken.getUser();
         RefreshToken newRefreshToken = refreshTokenService.createFor(user);

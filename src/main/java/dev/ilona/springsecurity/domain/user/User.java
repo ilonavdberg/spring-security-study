@@ -5,6 +5,7 @@ import dev.ilona.springsecurity.domain.user.role.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotBlank(message = "UUID is a required field.")
+    @NotNull(message = "UUID is a required field.")
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
-    private UUID uuid;
+    private UUID uuid = UUID.randomUUID();
 
     @NotBlank(message = "Username is a required field.")
     @Column(name = "username", nullable = false, unique = true, updatable = false)
