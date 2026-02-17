@@ -2,6 +2,7 @@ package dev.ilona.springsecurity.domain.user;
 
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
 import dev.ilona.springsecurity.domain.user.role.Role;
+import dev.ilona.springsecurity.exception.exceptions.IllegalStateTransitionException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -53,6 +54,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthenticationMethod authenticationMethod;
 
+    @NotNull(message = "Status is a required field.")
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
@@ -63,5 +69,23 @@ public class User {
         setPassword(password);
         setEmail(email);
         setRoles(roles);
+        setStatus(Status.ACTIVE);
+    }
+
+    public void block() {
+        if (status == Status.BLOCKED) {
+            throw new IllegalStateTransitionException("User is already blocked.");
+        }
+
+        if (roles.stream().anyMatch(Role::isInternal)) {
+            throw new IllegalStateTransitionException("Internal users cannot be blocked.");
+        }
+
+        setStatus(Status.BLOCKED);
+    }
+
+    public enum Status {
+        ACTIVE,
+        BLOCKED
     }
 }
