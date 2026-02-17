@@ -84,6 +84,10 @@ public class User {
         setStatus(Status.BLOCKED);
     }
 
+    public boolean isBlocked() {
+        return status == Status.BLOCKED;
+    }
+
     public boolean isInternal() {
         return roles.getFirst().isInternal(); // safe because roles are homogeneous
     }
