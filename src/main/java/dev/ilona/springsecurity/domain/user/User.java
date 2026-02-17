@@ -40,7 +40,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @NotEmpty(message = "At least one role must be set.")
+    @NotEmpty(message = "A user should have at least one role.")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -77,11 +77,15 @@ public class User {
             throw new IllegalStateTransitionException("User is already blocked.");
         }
 
-        if (roles.stream().anyMatch(Role::isInternal)) {
+        if (isInternal()) {
             throw new IllegalStateTransitionException("Internal users cannot be blocked.");
         }
 
         setStatus(Status.BLOCKED);
+    }
+
+    public boolean isInternal() {
+        return roles.getFirst().isInternal(); // safe because roles are homogeneous
     }
 
     public enum Status {

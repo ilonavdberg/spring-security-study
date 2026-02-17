@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static dev.ilona.springsecurity.domain.user.password.PasswordPolicy.assertValidPassword;
@@ -52,9 +53,7 @@ public class UserService {
     }
 
     private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, List<Role> roles) {
-        for (Role role : roles) {
-            validateEmailForRole(email, role);
-        }
+        validateEmailDomain(email, isInternalUser(roles));
 
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
@@ -79,21 +78,38 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .email(email)
-                .roles(roles)
+                .roles(new ArrayList<>(roles))
                 .build();
 
         return userRepository.save(user);
     }
 
-    public void validateEmailForRole(String email, Role role) {
+    public void validateEmailDomain(String email, boolean isInternalUser) {
         boolean isInternalEmail = email.endsWith(internalEmailDomain);
 
-        if (role.isInternal() && !isInternalEmail) {
+        if (isInternalUser && !isInternalEmail) {
             throw new PolicyViolationException("Internal users must use email addresses ending with: @" + internalEmailDomain);
         }
 
-        if (!role.isInternal() && isInternalEmail) {
+        if (!isInternalUser && isInternalEmail) {
             throw new PolicyViolationException("External users cannot use email addresses ending with: @" + internalEmailDomain);
+        }
+    }
+
+    private boolean isInternalUser(List<Role> roles) {
+        ensureCompatibleRoles(roles);
+        return roles.getFirst().isInternal();
+    }
+
+    private static void ensureCompatibleRoles(List<Role> roles) {
+        if (roles.isEmpty()) {
+            throw new PolicyViolationException("A user should have at least one role.");
+        }
+
+        long distinctRoleTypes = roles.stream().map(Role::isInternal).distinct().count();
+
+        if (distinctRoleTypes > 1) {
+            throw new PolicyViolationException("Cannot assign a mix of internal and external roles to the same user.");
         }
     }
 

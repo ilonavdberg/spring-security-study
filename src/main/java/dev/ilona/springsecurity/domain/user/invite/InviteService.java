@@ -26,7 +26,7 @@ public class InviteService {
     private int tokenByteLength;
 
     public Invite createInvite(String email, Role role) {
-        userService.validateEmailForRole(email, role);
+        userService.validateEmailDomain(email, role.isInternal());
 
         Invite invite = Invite.builder()
                 .email(email)
