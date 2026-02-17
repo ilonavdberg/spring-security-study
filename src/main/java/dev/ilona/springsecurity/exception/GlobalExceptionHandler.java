@@ -1,6 +1,7 @@
 package dev.ilona.springsecurity.exception;
 
 import dev.ilona.springsecurity.exception.exceptions.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -48,17 +49,16 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler(InvalidInviteOperationException.class)
-    public ProblemDetail handleInvalidInviteException(InvalidInviteOperationException exception, HttpServletRequest request) {
+    @ExceptionHandler(IllegalStateTransitionException.class)
+    public ProblemDetail handleIllegalStateTransitionException(IllegalStateTransitionException exception, HttpServletRequest request) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-        problem.setTitle("Invalid invite exception");
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }
 
-    @ExceptionHandler(IllegalStateTransitionException.class)
-    public ProblemDetail handleIllegalStateTransitionException(IllegalStateTransitionException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest request) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
         problem.setInstance(URI.create(request.getRequestURI()));
         return problem;
     }

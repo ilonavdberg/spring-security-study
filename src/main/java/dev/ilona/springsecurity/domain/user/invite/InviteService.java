@@ -2,8 +2,8 @@ package dev.ilona.springsecurity.domain.user.invite;
 
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.role.Role;
-import dev.ilona.springsecurity.exception.exceptions.InvalidInviteOperationException;
 import dev.ilona.springsecurity.utils.TokenGenerator;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class InviteService {
 
     public Invite acceptInvite(String email, String token) {
         Invite invite = inviteRepository.findByEmailAndToken(email, token)
-                .orElseThrow(() -> new InvalidInviteOperationException("No invite found for the provided email and token."));
+                .orElseThrow(() -> new EntityNotFoundException("No invite found for the provided token and email combination."));
 
         invite.accept();
         return invite;

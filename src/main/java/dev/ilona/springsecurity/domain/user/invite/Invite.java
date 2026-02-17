@@ -1,7 +1,7 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
 import dev.ilona.springsecurity.domain.user.role.Role;
-import dev.ilona.springsecurity.exception.exceptions.InvalidInviteOperationException;
+import dev.ilona.springsecurity.exception.exceptions.IllegalStateTransitionException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -58,7 +58,7 @@ public class Invite {
 
     public void validateAllowedToSend() {
         if (this.status != Status.NEW) {
-            throw new InvalidInviteOperationException("This invite is not in a valid state to be send.");
+            throw new IllegalStateTransitionException("This invite is not in a valid state to be send.");
         }
     }
 
@@ -68,11 +68,13 @@ public class Invite {
 
     public void accept() {
         if (this.expirationDate.isBefore(Instant.now())) {
-            throw new InvalidInviteOperationException("This invite cannot be accepted because it has expired.");
+            throw new IllegalStateTransitionException("This invite cannot be accepted because it has expired.");
         }
+
         if (this.status != Status.SENT) {
-            throw new InvalidInviteOperationException("This invite is not in a valid state to be accepted.");
+            throw new IllegalStateTransitionException("This invite is not in a valid state to be accepted.");
         }
+
         setStatus(Status.ACCEPTED);
     }
 
