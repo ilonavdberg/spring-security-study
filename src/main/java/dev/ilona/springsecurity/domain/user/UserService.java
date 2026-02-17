@@ -32,7 +32,10 @@ public class UserService {
      * @return the created {@link User} instance
      */
     public User createUser(String username, String rawPassword, String email, List<Role> roles) {
-        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, roles);
+        assertValidPassword(rawPassword);
+        String password = passwordEncoder.encode(rawPassword);
+
+        return createUser(AuthenticationMethod.PASSWORD, username, password, email, roles);
     }
 
     /**
@@ -51,21 +54,10 @@ public class UserService {
         return createUser(AuthenticationMethod.OAUTH2, email, null, email, roles);
     }
 
-    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, List<Role> roles) {
+    private User createUser(AuthenticationMethod authenticationMethod, String username, String password, String email, List<Role> roles) {
         for (Role role : roles) {
             validateEmailForRole(email, role);
         }
-
-        String password = switch (authenticationMethod) {
-            case PASSWORD -> {
-                assertValidPassword(rawPassword);
-                yield passwordEncoder.encode(rawPassword);
-            }
-            case OAUTH2 -> {
-                requireNoPasswordForOauth2(rawPassword);
-                yield null;
-            }
-        };
 
         if (userRepository.existsByUsername(username)) {
             throw new DuplicateEntryException("Username already exists: " + username);
@@ -94,12 +86,6 @@ public class UserService {
 
         if (!role.isInternal() && isInternalEmail) {
             throw new PolicyViolationException("External users cannot use email addresses ending with: @" + internalEmailDomain);
-        }
-    }
-
-    private static void requireNoPasswordForOauth2(String password) {
-        if (password != null) {
-            throw new PolicyViolationException("Password must be null for OAUTH2 authentication.");
         }
     }
 }
