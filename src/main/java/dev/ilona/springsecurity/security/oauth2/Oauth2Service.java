@@ -3,6 +3,7 @@ package dev.ilona.springsecurity.security.oauth2;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserService;
+import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,6 @@ public class Oauth2Service {
         Role role = roleService.getStandardUserRole();
 
         return userRepository.findByEmail(email)
-                .orElseGet(() -> userService.createUser(email, List.of(role)));
+                .orElseGet(() -> userService.createUser(email, UserType.EXTERNAL, List.of(role)));
     }
 }

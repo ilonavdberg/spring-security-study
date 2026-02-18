@@ -1,5 +1,6 @@
 package dev.ilona.springsecurity.domain.user.role;
 
+import dev.ilona.springsecurity.domain.user.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -22,11 +23,21 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
+    @NotNull(message = "Role must specify which user type it is restricted to.")
+    @Column(name = "restricted_to", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType restrictedUserType;
+
     /**
      * Returns {@code true} if this role is internal (admins), {@code false} if this role is external (standard users).
      */
+    @Deprecated
     public boolean isInternal() {
         return this.getName() == RoleName.ROLE_ADMIN;
+    }
+
+    public boolean isCompatibleWith(UserType userType) {
+        return this.restrictedUserType == userType;
     }
 
     @Getter

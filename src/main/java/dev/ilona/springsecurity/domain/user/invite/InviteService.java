@@ -1,6 +1,7 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
 import dev.ilona.springsecurity.domain.user.UserService;
+import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.utils.TokenGenerator;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,7 +27,7 @@ public class InviteService {
     private int tokenByteLength;
 
     public Invite createInvite(String email, Role role) {
-        userService.validateEmailDomain(email, role.isInternal());
+        userService.validateEmailDomain(email, UserType.INTERNAL);
 
         Invite invite = Invite.builder()
                 .email(email)

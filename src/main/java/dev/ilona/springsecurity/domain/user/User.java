@@ -3,6 +3,7 @@ package dev.ilona.springsecurity.domain.user;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.IllegalStateTransitionException;
+import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -40,6 +41,11 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @NotNull(message = "Type of user must be specified.")
+    @Column(name = "user_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
+
     @NotEmpty(message = "A user should have at least one role.")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -63,21 +69,24 @@ public class User {
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Builder(access = AccessLevel.PACKAGE)
-    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, List<Role> roles) {
+    public User(AuthenticationMethod authenticationMethod, String username, String password, String email, UserType userType, List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);
         setUsername(username);
         setPassword(password);
         setEmail(email);
+        setUserType(userType);
         setRoles(roles);
         setStatus(Status.ACTIVE);
+
+        ensureCompatibleRoles();
     }
 
     public void block() {
-        if (status == Status.BLOCKED) {
+        if (isBlocked()) {
             throw new IllegalStateTransitionException("User is already blocked.");
         }
 
-        if (isInternal()) {
+        if (userType.isInternal()) {
             throw new IllegalStateTransitionException("Internal users cannot be blocked.");
         }
 
@@ -88,8 +97,12 @@ public class User {
         return status == Status.BLOCKED;
     }
 
-    public boolean isInternal() {
-        return roles.getFirst().isInternal(); // safe because roles are homogeneous
+    private void ensureCompatibleRoles() {
+        for (Role role : roles) {
+            if (!role.isCompatibleWith(userType)) {
+                throw new PolicyViolationException("Role '" + role.getName() + "' is not compatible with user type " + userType);
+            }
+        }
     }
 
     public enum Status {

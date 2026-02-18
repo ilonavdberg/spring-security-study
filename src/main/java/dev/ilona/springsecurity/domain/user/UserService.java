@@ -32,8 +32,8 @@ public class UserService {
      * @param roles        the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String username, String rawPassword, String email, List<Role> roles) {
-        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, roles);
+    public User createUser(String username, String rawPassword, String email, UserType userType, List<Role> roles) {
+        return createUser(AuthenticationMethod.PASSWORD, username, rawPassword, email, userType, roles);
     }
 
     /**
@@ -48,12 +48,12 @@ public class UserService {
      * @param roles  the roles assigned to the new user
      * @return the created {@link User} instance
      */
-    public User createUser(String email, List<Role> roles) {
-        return createUser(AuthenticationMethod.OAUTH2, email, null, email, roles);
+    public User createUser(String email, UserType userType, List<Role> roles) {
+        return createUser(AuthenticationMethod.OAUTH2, email, null, email, userType, roles);
     }
 
-    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, List<Role> roles) {
-        validateEmailDomain(email, isInternalUser(roles));
+    private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, UserType userType, List<Role> roles) {
+        validateEmailDomain(email, userType);
 
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
@@ -78,38 +78,22 @@ public class UserService {
                 .username(username)
                 .password(password)
                 .email(email)
+                .userType(userType)
                 .roles(new ArrayList<>(roles))
                 .build();
 
         return userRepository.save(user);
     }
 
-    public void validateEmailDomain(String email, boolean isInternalUser) {
-        boolean isInternalEmail = email.endsWith(internalEmailDomain);
+    public void validateEmailDomain(String email, UserType userType) {
+        boolean isInternalEmail = email.endsWith("@" + internalEmailDomain);
 
-        if (isInternalUser && !isInternalEmail) {
+        if (userType.isInternal() && !isInternalEmail) {
             throw new PolicyViolationException("Internal users must use email addresses ending with: @" + internalEmailDomain);
         }
 
-        if (!isInternalUser && isInternalEmail) {
+        if (userType.isExternal() && isInternalEmail) {
             throw new PolicyViolationException("External users cannot use email addresses ending with: @" + internalEmailDomain);
-        }
-    }
-
-    private boolean isInternalUser(List<Role> roles) {
-        ensureCompatibleRoles(roles);
-        return roles.getFirst().isInternal();
-    }
-
-    private static void ensureCompatibleRoles(List<Role> roles) {
-        if (roles.isEmpty()) {
-            throw new PolicyViolationException("A user should have at least one role.");
-        }
-
-        long distinctRoleTypes = roles.stream().map(Role::isInternal).distinct().count();
-
-        if (distinctRoleTypes > 1) {
-            throw new PolicyViolationException("Cannot assign a mix of internal and external roles to the same user.");
         }
     }
 

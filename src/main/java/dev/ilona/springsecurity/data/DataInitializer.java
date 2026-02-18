@@ -1,6 +1,7 @@
 package dev.ilona.springsecurity.data;
 
 import dev.ilona.springsecurity.domain.user.UserService;
+import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.role.RoleRepository;
@@ -40,6 +41,6 @@ public class DataInitializer {
 //    @PostConstruct
     public void addUser() {
         Role role = roleService.getStandardUserRole();
-        User user = userService.createUser("test_user", "password", "test_user@example.com", List.of(role));
+        User user = userService.createUser("test_user", "password", "test_user@example.com", UserType.EXTERNAL, List.of(role));
     }
 }
