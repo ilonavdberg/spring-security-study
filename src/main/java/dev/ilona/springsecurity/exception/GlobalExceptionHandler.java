@@ -24,19 +24,19 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(DuplicateEntryException.class)
-    public ProblemDetail handleDuplicateEntryException(DuplicateEntryException exception, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-        problemDetail.setTitle("Duplicate entry not allowed");
-        problemDetail.setInstance(URI.create(request.getRequestURI()));
-        return problemDetail;
-    }
-
     @ExceptionHandler(DatabaseIntegrityException.class)
     public ProblemDetail handleDatabaseIntegrityException(DatabaseIntegrityException exception, HttpServletRequest request) {
         log.error("Critical configuration error: {}", exception.getMessage(), exception);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred. Please try again later or contact support.");
         problemDetail.setTitle("Server configuration error");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(DuplicateEntryException.class)
+    public ProblemDetail handleDuplicateEntryException(DuplicateEntryException exception, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle("Duplicate entry not allowed");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
@@ -61,6 +61,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
         problemDetail.setTitle("Record not found");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArgumentException(IllegalArgumentException exception, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problemDetail.setTitle("Bad Request");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }

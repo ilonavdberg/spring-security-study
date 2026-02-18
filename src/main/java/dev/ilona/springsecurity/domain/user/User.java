@@ -68,6 +68,9 @@ public class User {
     @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted;
+
     @Builder(access = AccessLevel.PACKAGE)
     public User(AuthenticationMethod authenticationMethod, String username, String password, String email, UserType userType, List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);

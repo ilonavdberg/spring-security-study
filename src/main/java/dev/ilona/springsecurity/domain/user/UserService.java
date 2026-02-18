@@ -29,7 +29,8 @@ public class UserService {
      * @param username    the username chosen by the user
      * @param rawPassword the plain text password provided by the user
      * @param email       the user's email address
-     * @param roles        the roles assigned to the new user
+     * @param userType    the type of user (e.g. INTERNAL, EXTERNAL)
+     * @param roles       the roles assigned to the new user
      * @return the created {@link User} instance
      */
     public User createUser(String username, String rawPassword, String email, UserType userType, List<Role> roles) {
@@ -43,8 +44,9 @@ public class UserService {
      *   <li>Password is {@code null} because OAuth2 users do not have a password.</li>
      * </ul>
      *
-     * @param email the user's email, also used as username
-     * @param roles  the roles assigned to the new user
+     * @param email     the user's email, also used as username
+     * @param userType  the type of user (e.g. INTERNAL, EXTERNAL)
+     * @param roles     the roles assigned to the new user
      * @return the created {@link User} instance
      */
     public User createUser(String email, UserType userType, List<Role> roles) {

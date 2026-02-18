@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserManagementService {
 
@@ -26,7 +27,6 @@ public class UserManagementService {
     private final InviteService inviteService;
     private final UserRepository userRepository;
 
-    @Transactional
     public UUID registerUser(UserRegistrationRequest request) {
         User user = userService.createUser(
                 request.username(),
@@ -38,7 +38,6 @@ public class UserManagementService {
         return user.getUuid();
     }
 
-    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void blockUser(UUID uuid) {
         User user = userRepository.findByUuid(uuid)
@@ -47,7 +46,6 @@ public class UserManagementService {
         user.block();
     }
 
-    @Transactional
     public UUID createUserFromInvite(String email, String password, String token) {
         Invite invite = inviteService.acceptInvite(email, token);
 
@@ -61,7 +59,6 @@ public class UserManagementService {
         return user.getUuid();
     }
 
-    @Transactional
     @PreAuthorize("hasRole('ADMIN')")
     public void createAndSendInviteForAdmin(String email) {
         Invite invite = inviteService.createInvite(email, roleService.getAdminRole());

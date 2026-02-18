@@ -4,13 +4,14 @@ import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.UserType;
-import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
+import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +27,15 @@ public class Oauth2Service {
             throw new IllegalArgumentException("OAuth2 provider did not supply an email");
         }
 
-        Role role = roleService.getStandardUserRole();
+        Optional<User> existingUser = userRepository.findByUsernameAndDeletedFalse(email);
+        if (existingUser.isPresent()) {
+            return existingUser.get();
+        }
 
-        return userRepository.findByEmail(email)
-                .orElseGet(() -> userService.createUser(email, UserType.EXTERNAL, List.of(role)));
+        if (userRepository.existsByEmailAndDeletedTrue(email)) {
+            throw new DuplicateEntryException("This account has been deleted. Please contact support to recover your account.");
+        }
+
+        return userService.createUser(email, UserType.EXTERNAL, List.of(roleService.getStandardUserRole()));
     }
 }
