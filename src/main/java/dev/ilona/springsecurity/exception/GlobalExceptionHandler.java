@@ -18,48 +18,50 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid username or password.");
-        problem.setTitle("Authentication failed");
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid username or password.");
+        problemDetail.setTitle("Authentication failed");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 
     @ExceptionHandler(DuplicateEntryException.class)
     public ProblemDetail handleDuplicateEntryException(DuplicateEntryException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-        problem.setTitle("Duplicate entry not allowed");
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle("Duplicate entry not allowed");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 
     @ExceptionHandler(DatabaseIntegrityException.class)
     public ProblemDetail handleDatabaseIntegrityException(DatabaseIntegrityException exception, HttpServletRequest request) {
         log.error("Critical configuration error: {}", exception.getMessage(), exception);
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred. Please try again later or contact support.");
-        problem.setTitle("Server configuration error");
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected server error occurred. Please try again later or contact support.");
+        problemDetail.setTitle("Server configuration error");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 
     @ExceptionHandler(PolicyViolationException.class)
     public ProblemDetail handlePolicyViolationException(PolicyViolationException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-        problem.setTitle("Business rule violation");
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle("Business rule violation");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 
     @ExceptionHandler(IllegalStateTransitionException.class)
     public ProblemDetail handleIllegalStateTransitionException(IllegalStateTransitionException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        problemDetail.setTitle("Illegal state transition");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest request) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
-        problem.setInstance(URI.create(request.getRequestURI()));
-        return problem;
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+        problemDetail.setTitle("Record not found");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
     }
 }

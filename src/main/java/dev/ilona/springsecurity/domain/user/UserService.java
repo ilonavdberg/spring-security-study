@@ -41,7 +41,6 @@ public class UserService {
      * <ul>
      *   <li>Username is set to the email to satisfy Spring Security's {@code UserDetailsService}, which requires a non-null username.</li>
      *   <li>Password is {@code null} because OAuth2 users do not have a password.</li>
-     *   <li>Email is the actual email of the user.</li>
      * </ul>
      *
      * @param email the user's email, also used as username
