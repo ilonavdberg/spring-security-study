@@ -10,6 +10,7 @@ import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
+import dev.ilona.springsecurity.utils.EmailService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +31,7 @@ public class UserManagementService {
     private final UserRepository userRepository;
     private final InviteRepository inviteRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final EmailService emailService;
 
     public UUID registerUser(UserRegistrationRequest request) {
         User user = userService.createUser(
@@ -72,7 +74,7 @@ public class UserManagementService {
         Invite invite = inviteService.createInvite(email, roleService.getAdminRole());
 
         invite.validateAllowedToSend();
-        //TODO: add call to EmailSender to actually send the email
+        emailService.sendInviteEmail(invite.getEmail(), invite.getToken());
         invite.markAsSent();
     }
 }
