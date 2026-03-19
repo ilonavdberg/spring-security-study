@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.net.URI;
+import java.nio.file.AccessDeniedException;
 
 @Slf4j
 @RestControllerAdvice
@@ -20,6 +21,14 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleBadCredentialsException(BadCredentialsException exception, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid username or password.");
         problemDetail.setTitle("Authentication failed");
+        problemDetail.setInstance(URI.create(request.getRequestURI()));
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDeniedException(AccessDeniedException exception, HttpServletRequest request) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, "Access is denied.");
+        problemDetail.setTitle("Forbidden");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
