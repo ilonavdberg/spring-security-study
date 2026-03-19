@@ -38,18 +38,4 @@ public class InviteService {
 
         return inviteRepository.save(invite);
     }
-
-    public Invite acceptInvite(String email, String token) {
-        Invite invite = inviteRepository.findByEmailAndToken(email, token)
-                .orElseThrow(() -> new EntityNotFoundException("No invite found for the provided token and email combination."));
-
-        invite.accept();
-        return invite;
-    }
-
-    public void submitInviteEmail(Invite invite) {
-        invite.validateAllowedToSend();
-        //TODO: add call to EmailSender to actually send the email
-        invite.markAsSent();
-    }
 }

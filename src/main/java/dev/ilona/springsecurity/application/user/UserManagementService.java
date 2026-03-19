@@ -6,7 +6,9 @@ import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
+import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class UserManagementService {
     private final RoleService roleService;
     private final InviteService inviteService;
     private final UserRepository userRepository;
+    private final InviteRepository inviteRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public UUID registerUser(UserRegistrationRequest request) {
         User user = userService.createUser(
@@ -44,13 +48,17 @@ public class UserManagementService {
                 .orElseThrow(() -> new EntityNotFoundException("No user found with uuid: " + uuid));
 
         user.block();
+        refreshTokenRepository.deleteAllByUser(user);
     }
 
     public UUID createUserFromInvite(String email, String password, String token) {
-        Invite invite = inviteService.acceptInvite(email, token);
+        Invite invite = inviteRepository.findByEmailAndToken(email, token)
+                .orElseThrow(() -> new EntityNotFoundException("No invite found for the provided token and email combination."));
+
+        invite.accept();
 
         User user = userService.createUser(
-                email, // Admins use their email address as their username
+                email, // Internal users use their email address as their username
                 password,
                 email,
                 UserType.INTERNAL,
@@ -62,6 +70,9 @@ public class UserManagementService {
     @PreAuthorize("hasRole('ADMIN')")
     public void createAndSendInviteForAdmin(String email) {
         Invite invite = inviteService.createInvite(email, roleService.getAdminRole());
-        inviteService.submitInviteEmail(invite);
+
+        invite.validateAllowedToSend();
+        //TODO: add call to EmailSender to actually send the email
+        invite.markAsSent();
     }
 }
