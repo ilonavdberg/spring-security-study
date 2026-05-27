@@ -1,17 +1,17 @@
 package dev.ilona.springsecurity.domain.user;
 
+import dev.ilona.springsecurity.domain.user.policies.EmailPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.ilona.springsecurity.domain.user.password.PasswordPolicy.assertValidPassword;
+import static dev.ilona.springsecurity.domain.user.policies.PasswordPolicy.assertValidPassword;
 
 @Service
 @RequiredArgsConstructor
@@ -19,9 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${application.email.domain}")
-    private String internalEmailDomain;
+    private final EmailPolicy emailPolicy;
 
     /**
      * Creates a new user with password-based authentication.
@@ -54,7 +52,7 @@ public class UserService {
     }
 
     private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, UserType userType, List<Role> roles) {
-        validateEmailDomain(email, userType);
+        emailPolicy.validate(email, userType);
 
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
@@ -84,18 +82,6 @@ public class UserService {
                 .build();
 
         return userRepository.save(user);
-    }
-
-    public void validateEmailDomain(String email, UserType userType) {
-        boolean isInternalEmail = email.endsWith("@" + internalEmailDomain);
-
-        if (userType.isInternal() && !isInternalEmail) {
-            throw new PolicyViolationException("Internal users must use email addresses ending with: @" + internalEmailDomain);
-        }
-
-        if (userType.isExternal() && isInternalEmail) {
-            throw new PolicyViolationException("External users cannot use email addresses ending with: @" + internalEmailDomain);
-        }
     }
 
     private static void requireNoPasswordForOauth2(String password) {

@@ -1,6 +1,6 @@
 package dev.ilona.springsecurity.api.user;
 
-import dev.ilona.springsecurity.domain.user.password.PasswordPolicy;
+import dev.ilona.springsecurity.domain.user.policies.PasswordPolicy;
 import jakarta.validation.constraints.*;
 
 public record UserRegistrationRequest(

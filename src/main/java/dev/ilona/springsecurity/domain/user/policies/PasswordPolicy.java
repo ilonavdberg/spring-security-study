@@ -1,4 +1,4 @@
-package dev.ilona.springsecurity.domain.user.password;
+package dev.ilona.springsecurity.domain.user.policies;
 
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 
