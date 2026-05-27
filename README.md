@@ -13,10 +13,16 @@ While inspired by the book, the implementation reflects my own design decisions,
 
 ## Technical Highlights
 - **Spring Boot + Spring Security**: Core setup for authentication and authorization.
-- **Role-based Access Control (RBAC)**: Fine-grained authorization within an identity and access management domain.
 - **JWT-based Authentication**: Stateless security layer for API endpoints.
-- **OAuth 2 Login**: Integration with an external identity provider for modern authentication.
-- **Basic IAM Concepts**: User registration, invite-based onboarding, role assignment, account blocking, token lifecycle management.
+- **OAuth2 Login**: Integration with an external identity provider for modern authentication.
+- **Token Lifecycle Management**: Refresh token support and revocation handling.
+- **User Lifecycle Management**: User registration, invite-based onboarding, account blocking, role assignment.
+- **Role-based Access Control (RBAC)**: Fine-grained authorization within an identity and access management domain.
 - **Clean Architecture**: Organized structure for clarity and future reusability.
+- **Docker**: Containerized PostgreSQL setup for consistent local development environment.
 
-> *Status: In progress* - this repository continues to evolve as I extend and refine a Spring Security-based IAM-style backend system.
+### Planned
+- **Testing Strategy (BDD)**: Behavior-driven testing approach to validate critical IAM flows.
+- **Database Migrations (Flyway)**: Structured schema versioning and repeatable database setup.
+
+> This repository is actively maintained and continues to evolve as new features are added.
