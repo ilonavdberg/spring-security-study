@@ -3,6 +3,8 @@
 This project is a personal study and reference implementation of Spring Security.
 It is based on concepts and practices explained in *[Spring Security: Start Here](https://www.manning.com/books/spring-start-here)* by *Laurentiu Spilca*, but goes beyond simply following the book.
 
+The security concepts are implemented in the context of a basic Identity & Access Management (IAM) service, including user provisioning, account lifecycle operations, role management, token lifecycle management, and multiple authentication flows.
+
 The goal of this project is twofold:
 - To deepen my understanding of Spring Security by implementing the security layer in a clean, structured way.
 - To create a reusable reference project I can revisit when applying security in future Spring projects.
@@ -14,6 +16,7 @@ While inspired by the book, the implementation reflects my own design decisions,
 - **Role-based Access Control (RBAC)**: Fine-grained access restrictions across dummy business domains.
 - **JWT-based Authentication**: Stateless security layer for API endpoints.
 - **OAuth 2 Login**: Integration with an external identity provider for modern authentication.
+- **Basic IAM Concepts**: User registration, invite-based onboarding, role assignment, account blocking, token lifecycle management.
 - **Clean Architecture**: Organized structure for clarity and future reusability.
 
 > *Status: In progress* — this repository evolves as I implement each of the planned features and patterns from my Spring Security study.
