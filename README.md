@@ -19,4 +19,4 @@ While inspired by the book, the implementation reflects my own design decisions,
 - **Basic IAM Concepts**: User registration, invite-based onboarding, role assignment, account blocking, token lifecycle management.
 - **Clean Architecture**: Organized structure for clarity and future reusability.
 
-> *Status: In progress* — this repository evolves as I implement each of the planned features and patterns from my Spring Security study.
+> *Status: In progress* - this repository continues to evolve as I extend and refine a Spring Security-based IAM-style backend system.
