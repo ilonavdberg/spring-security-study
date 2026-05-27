@@ -25,4 +25,5 @@ While inspired by the book, the implementation reflects my own design decisions,
 - **Testing Strategy (BDD)**: Behavior-driven testing approach to validate critical IAM flows.
 - **Database Migrations (Flyway)**: Structured schema versioning and repeatable database setup.
 
+
 > This repository is actively maintained and continues to evolve as new features are added.
