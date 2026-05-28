@@ -4,7 +4,7 @@ import dev.ilona.springsecurity.domain.user.policies.PasswordPolicy;
 import jakarta.validation.constraints.*;
 
 public record UserRegistrationRequest(
-        @NotNull(message = "Username is required.")
+        @NotBlank(message = "Username is required.")
         @Size(
                 min = 8,
                 max = 32,
@@ -13,11 +13,11 @@ public record UserRegistrationRequest(
         @Pattern(regexp = "^[A-Za-z0-9_-]+$", message = "Username can only contain letters, digits, underscores, and hyphens, and no spaces.")
         String username,
 
-        @NotNull(message = "Email is required.")
+        @NotBlank(message = "Email is required.")
         @Email(message = "Email must be a valid email address.")
         String email,
 
-        @NotNull(message = "Password is required.")
+        @NotBlank(message = "Password is required.")
         @Size(
                 min = PasswordPolicy.MIN_LENGTH,
                 max = PasswordPolicy.MAX_LENGTH,
