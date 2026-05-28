@@ -55,7 +55,7 @@ public class User {
     )
     private List<Role> roles = new ArrayList<>();
 
-    @NotBlank(message = "Authentication method is a required field.")
+    @NotNull(message = "Authentication method is a required field.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AuthenticationMethod authenticationMethod;

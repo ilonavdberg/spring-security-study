@@ -2,9 +2,9 @@ package dev.ilona.springsecurity.domain.user.invite;
 
 import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.UserType;
+import dev.ilona.springsecurity.domain.user.policies.EmailPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.utils.TokenGenerator;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ public class InviteService {
     private final InviteRepository inviteRepository;
     private final UserService userService;
     private final TokenGenerator tokenGenerator;
+    private final EmailPolicy emailPolicy;
 
     @Value("${security.invite.token.valid-period}")
     private Duration validPeriod;
@@ -27,7 +28,7 @@ public class InviteService {
     private int tokenByteLength;
 
     public Invite createInvite(String email, Role role) {
-        userService.validateEmailDomain(email, UserType.INTERNAL);
+        emailPolicy.validate(email, UserType.INTERNAL);
 
         Invite invite = Invite.builder()
                 .email(email)

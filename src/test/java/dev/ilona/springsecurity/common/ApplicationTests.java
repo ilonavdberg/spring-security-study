@@ -1,10 +1,10 @@
-package dev.ilona.springsecurity;
+package dev.ilona.springsecurity.common;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
-@Import(TestcontainersConfiguration.class)
+@Import(PostgresTestContainerConfig.class)
 @SpringBootTest
 class ApplicationTests {
 
