@@ -2,8 +2,8 @@ package dev.ilona.springsecurity.user;
 
 import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.application.user.UserManagementService;
-import dev.ilona.springsecurity.common.PostgresTestContainerConfig;
-import dev.ilona.springsecurity.common.TestDataInitializer;
+import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
+import dev.ilona.springsecurity.config.TestDataInitializer;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.role.Role;
@@ -52,7 +52,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        userManagementService.registerUser(request);
+        userManagementService.registerExternalUser(request);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        UUID uuid = userManagementService.registerUser(request);
+        UUID uuid = userManagementService.registerExternalUser(request);
 
         User savedUser = userRepository.findByUuid(uuid)
                 .orElseThrow();
@@ -92,7 +92,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerUser(request))
+        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
                 .isInstanceOf(DuplicateEntryException.class)
                 .hasMessageMatching("(?i).*username.*");
 
@@ -108,7 +108,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerUser(request))
+        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
                 .isInstanceOf(DuplicateEntryException.class)
                 .hasMessageMatching("(?i).*email.*");
 
@@ -124,7 +124,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerUser(request))
+        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
                 .isInstanceOf(PolicyViolationException.class);
 
         assertThat(userRepository.existsByUsername(username)).isFalse();
