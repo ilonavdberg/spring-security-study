@@ -1,6 +1,6 @@
 package dev.ilona.springsecurity;
 
-import dev.ilona.springsecurity.common.PostgresTestContainerConfig;
+import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
 import org.springframework.boot.SpringApplication;
 
 public class TestApplication {

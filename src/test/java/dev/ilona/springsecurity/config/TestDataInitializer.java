@@ -1,4 +1,4 @@
-package dev.ilona.springsecurity.common;
+package dev.ilona.springsecurity.config;
 
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.role.Role;

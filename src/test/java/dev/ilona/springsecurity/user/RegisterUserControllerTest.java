@@ -35,7 +35,7 @@ public class RegisterUserControllerTest {
     @Test
     void shouldReturn201AndLocationHeader() throws Exception {
         UUID uuid = UUID.randomUUID();
-        when(userManagementService.registerUser(any()))
+        when(userManagementService.registerExternalUser(any()))
                 .thenReturn(uuid);
 
         mockMvc.perform(post("/api/users/register")

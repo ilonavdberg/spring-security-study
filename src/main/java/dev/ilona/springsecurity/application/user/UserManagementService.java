@@ -33,7 +33,7 @@ public class UserManagementService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
 
-    public UUID registerUser(UserRegistrationRequest request) {
+    public UUID registerExternalUser(UserRegistrationRequest request) {
         User user = userService.createUser(
                 request.username(),
                 request.password(),
@@ -53,7 +53,7 @@ public class UserManagementService {
         refreshTokenRepository.deleteAllByUser(user);
     }
 
-    public UUID createUserFromInvite(String email, String password, String token) {
+    public UUID registerUserFromInvite(String email, String password, String token) {
         Invite invite = inviteRepository.findByEmailAndToken(email, token)
                 .orElseThrow(() -> new EntityNotFoundException("No invite found for the provided token and email combination."));
 
