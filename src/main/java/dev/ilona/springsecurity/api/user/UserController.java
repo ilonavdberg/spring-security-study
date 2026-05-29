@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody UserRegistrationRequest request) {
-        UUID uuid = userManagementService.registerExternalUser(request);
+        UUID uuid = userManagementService.registerUser(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()

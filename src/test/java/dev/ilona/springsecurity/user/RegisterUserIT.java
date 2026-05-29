@@ -52,7 +52,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        userManagementService.registerExternalUser(request);
+        userManagementService.registerUser(request);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        UUID uuid = userManagementService.registerExternalUser(request);
+        UUID uuid = userManagementService.registerUser(request);
 
         User savedUser = userRepository.findByUuid(uuid)
                 .orElseThrow();
@@ -92,7 +92,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
+        assertThatThrownBy(() -> userManagementService.registerUser(request))
                 .isInstanceOf(DuplicateEntryException.class)
                 .hasMessageMatching("(?i).*username.*");
 
@@ -108,7 +108,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
+        assertThatThrownBy(() -> userManagementService.registerUser(request))
                 .isInstanceOf(DuplicateEntryException.class)
                 .hasMessageMatching("(?i).*email.*");
 
@@ -124,7 +124,7 @@ public class RegisterUserIT {
                 "P@ssW0rd"
         );
 
-        assertThatThrownBy(() -> userManagementService.registerExternalUser(request))
+        assertThatThrownBy(() -> userManagementService.registerUser(request))
                 .isInstanceOf(PolicyViolationException.class);
 
         assertThat(userRepository.existsByUsername(username)).isFalse();

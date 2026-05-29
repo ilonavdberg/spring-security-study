@@ -25,7 +25,7 @@ public class InviteController {
 
     @PostMapping("/{token}/accept")
     public ResponseEntity<Void> acceptInvite(@PathVariable String token, @Valid @RequestBody AcceptInviteRequest request) {
-        UUID uuid = userManagementService.registerUserFromInvite(request.email(), request.password(), token);
+        UUID uuid = userManagementService.createUserFromInvite(request.email(), request.password(), token);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
