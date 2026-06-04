@@ -3,8 +3,7 @@ package dev.ilona.springsecurity.security.jwt;
 import dev.ilona.springsecurity.security.DatabaseUserDetailsService;
 import dev.ilona.springsecurity.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
@@ -25,8 +24,24 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid JWT token");
         }
 
-        String username = jwtService.extractUsername(token);
+        String username = jwtService.extractSubject(token);
         UserPrincipal principal = (UserPrincipal) userDetailsService.loadUserByUsername(username);
+
+        if (!principal.isAccountNonLocked()) {
+            throw new LockedException("Account is locked");
+        }
+
+        if (!principal.isEnabled()) {
+            throw new DisabledException("Account is disabled");
+        }
+
+        if (!principal.isAccountNonExpired()) {
+            throw new AccountExpiredException("Account expired");
+        }
+
+        if (!principal.isCredentialsNonExpired()) {
+            throw new CredentialsExpiredException("Credentials expired");
+        }
 
         return new JwtAuthenticationToken(principal);
     }
