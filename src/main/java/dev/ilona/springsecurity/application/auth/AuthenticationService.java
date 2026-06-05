@@ -1,7 +1,6 @@
 package dev.ilona.springsecurity.application.auth;
 
 import dev.ilona.springsecurity.api.auth.LoginRequest;
-import dev.ilona.springsecurity.api.auth.RefreshResponse;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshToken;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenService;
@@ -24,26 +23,29 @@ public class AuthenticationService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public String login(LoginRequest request) {
+    public TokenPair login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-        return jwtService.generateToken(userPrincipal.getUser());
+        User user = ((UserPrincipal) authentication.getPrincipal()).getUser();
+        return createTokenPair(user);
     }
 
     @Transactional
-    public RefreshResponse refresh(String token) {
+    public TokenPair refresh(String token) {
         RefreshToken refreshToken = refreshTokenService.resolve(token);
 
-        User user = refreshToken.getUser();
-        RefreshToken newRefreshToken = refreshTokenService.createFor(user);
-        String newAccessToken = jwtService.generateToken(user);
-
+        TokenPair tokens = createTokenPair(refreshToken.getUser());
         refreshTokenRepository.delete(refreshToken); // Refresh tokens are single-use
 
-        return RefreshResponse.of(newRefreshToken.getToken(), newAccessToken);
+        return tokens;
+    }
+
+    private TokenPair createTokenPair(User user) {
+        String refreshToken = refreshTokenService.createFor(user).getToken();
+        String accessToken = jwtService.generateToken(user);
+        return TokenPair.of(refreshToken, accessToken);
     }
 }
 

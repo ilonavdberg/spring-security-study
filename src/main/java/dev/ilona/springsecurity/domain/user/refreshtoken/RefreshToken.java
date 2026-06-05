@@ -40,10 +40,7 @@ public class RefreshToken {
         setUser(user);
     }
 
-    /**
-     * @return {@code true} if this refresh token has not expired.
-     */
-    public boolean isValid() {
-        return this.expirationDate.isAfter(Instant.now());
+    public boolean isExpired() {
+        return expirationDate.isBefore(Instant.now());
     }
 }

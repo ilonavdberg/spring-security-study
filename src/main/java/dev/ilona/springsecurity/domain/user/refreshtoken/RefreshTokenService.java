@@ -41,8 +41,7 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new BadCredentialsException("Invalid refresh token."));
 
 
-        if (!refreshToken.isValid()) {
-            refreshTokenRepository.delete(refreshToken);
+        if (refreshToken.isExpired()) {
             throw new BadCredentialsException("Refresh token expired.");
         }
 
