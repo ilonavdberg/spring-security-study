@@ -19,13 +19,13 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenPair> login(@Valid @RequestBody LoginRequest request) {
-        TokenPair tokens = authenticationService.login(request);
-        return ResponseEntity.ok(tokens);
+        TokenPair tokenPair = authenticationService.login(request);
+        return ResponseEntity.ok(tokenPair);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenPair> refresh(@Valid @RequestBody RefreshRequest request) {
-        TokenPair tokens = authenticationService.refresh(request.token());
-        return ResponseEntity.ok(tokens);
+        TokenPair tokenPair = authenticationService.refresh(request.token());
+        return ResponseEntity.ok(tokenPair);
     }
 }

@@ -1,6 +1,9 @@
 package dev.ilona.springsecurity.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
+import dev.ilona.springsecurity.application.auth.TokenPair;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
 import dev.ilona.springsecurity.config.TestDataInitializer;
@@ -13,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -33,6 +37,9 @@ public class AuthenticationControllerIT {
     MockMvc mockMvc;
 
     @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
     UserManagementService userManagementService;
 
     @BeforeEach
@@ -47,7 +54,7 @@ public class AuthenticationControllerIT {
     }
 
     @Test
-    void shouldReturnTokenWhenCredentialsAreValid() throws Exception {
+    void shouldReturnTokenPairWhenLoginCredentialsAreValid() throws Exception {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -57,12 +64,14 @@ public class AuthenticationControllerIT {
                         }
                         """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").isString())
-                .andExpect(jsonPath("$.token").isNotEmpty());
+                .andExpect(jsonPath("$.accessToken").isString())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.refreshToken").isString())
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty());
     }
 
     @Test
-    void shouldRejectInvalidCredentials() throws Exception {
+    void shouldRejectWhenLoginCredentialsAreInvalid() throws Exception {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -73,4 +82,33 @@ public class AuthenticationControllerIT {
                         """))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void shouldReturnTokenPairWhenRefreshTokenIsValid() throws Exception {
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "username": "test-user",
+                            "password": "P@ssW0rd"
+                        }
+                        """))
+                .andReturn();
+
+        TokenPair tokenPair = objectMapper.readValue(result.getResponse().getContentAsString(), TokenPair.class);
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "token": "%s"
+                        }
+                        """.formatted(tokenPair.refreshToken())))
+                .andExpect(status().isOk());
+    }
+
+    void shouldRejectWhenRefreshTokenIsInvalid() {}
+    void shouldRejectWhenRefreshTokenIsExpired() {}
+    void shouldRejectWhenRefreshTokenIsAlreadyUsed() {}
+
 }

@@ -24,7 +24,7 @@ public class RefreshToken {
     @Column(name = "token", nullable = false, unique = true, updatable = false)
     private String token;
 
-    @NotBlank(message = "Expiration date is a required field.")
+    @NotNull(message = "Expiration date is a required field.")
     @Column(name = "expiration_date", nullable = false, updatable = false)
     private Instant expirationDate;
 
