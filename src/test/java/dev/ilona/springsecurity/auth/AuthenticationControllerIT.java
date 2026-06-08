@@ -1,12 +1,13 @@
 package dev.ilona.springsecurity.auth;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.application.auth.TokenPair;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
 import dev.ilona.springsecurity.config.TestDataInitializer;
+import dev.ilona.springsecurity.domain.user.User;
+import dev.ilona.springsecurity.domain.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,9 @@ public class AuthenticationControllerIT {
 
     @Autowired
     UserManagementService userManagementService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @BeforeEach
     void setup() {
@@ -84,6 +88,42 @@ public class AuthenticationControllerIT {
     }
 
     @Test
+    void shouldRejectBlockedUserLogin() throws Exception {
+        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
+                .orElseThrow();
+
+        user.block();
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "username": "test-user",
+                            "password": "P@ssW0rd"
+                        }
+                        """))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldRejectDeletedUserLogin() throws Exception {
+        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
+                .orElseThrow();
+
+        user.delete();
+
+        mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "username": "test-user",
+                            "password": "P@ssW0rd"
+                        }
+                        """))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     void shouldReturnTokenPairWhenRefreshTokenIsValid() throws Exception {
         MvcResult result = mockMvc.perform(post("/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -104,11 +144,16 @@ public class AuthenticationControllerIT {
                             "token": "%s"
                         }
                         """.formatted(tokenPair.refreshToken())))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").isString())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.refreshToken").isString())
+                .andExpect(jsonPath("$.refreshToken").isNotEmpty());
     }
 
     void shouldRejectWhenRefreshTokenIsInvalid() {}
     void shouldRejectWhenRefreshTokenIsExpired() {}
     void shouldRejectWhenRefreshTokenIsAlreadyUsed() {}
+
 
 }

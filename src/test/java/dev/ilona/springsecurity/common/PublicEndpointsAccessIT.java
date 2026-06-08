@@ -42,7 +42,7 @@ public class PublicEndpointsAccessIT {
     }
 
     @Test
-    void shouldAllowAnonymousUserToRefreshToken() throws Exception {
+    void shouldAllowAnonymousUserToRefreshTokens() throws Exception {
         mockMvc.perform(post("/auth/refresh"))
                 .andExpect(isAccessibleWithoutAuthentication());
     }

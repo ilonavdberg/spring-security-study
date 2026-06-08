@@ -100,6 +100,14 @@ public class User {
         return status == Status.BLOCKED;
     }
 
+    public void delete() {
+        if (deleted) {
+            throw new IllegalStateTransitionException("User is already deleted.");
+        }
+
+        setDeleted(true);
+    }
+
     private void ensureCompatibleRoles() {
         for (Role role : roles) {
             if (!role.isCompatibleWith(userType)) {
