@@ -11,7 +11,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "refresh_tokens")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Setter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.PRIVATE)
 @Getter
 public class RefreshToken {
 
