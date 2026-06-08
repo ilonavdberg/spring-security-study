@@ -125,17 +125,7 @@ public class AuthenticationControllerIT {
 
     @Test
     void shouldReturnTokenPairWhenRefreshTokenIsValid() throws Exception {
-        MvcResult result = mockMvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {
-                            "username": "test-user",
-                            "password": "P@ssW0rd"
-                        }
-                        """))
-                .andReturn();
-
-        TokenPair tokenPair = objectMapper.readValue(result.getResponse().getContentAsString(), TokenPair.class);
+        TokenPair tokenPair = loginAndGetTokenPair();
 
         mockMvc.perform(post("/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -151,9 +141,48 @@ public class AuthenticationControllerIT {
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty());
     }
 
+    @Test
+    void shouldRejectWhenRefreshTokenIsAlreadyUsed() throws Exception {
+        TokenPair tokenPair = loginAndGetTokenPair();
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "token": "%s"
+                        }
+                        """.formatted(tokenPair.refreshToken())))
+                .andReturn();
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "token": "%s"
+                        }
+                        """.formatted(tokenPair.refreshToken())))
+                .andExpect(status().isUnauthorized());
+    }
+
+    private TokenPair loginAndGetTokenPair() throws Exception {
+        MvcResult result = mockMvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                            "username": "test-user",
+                            "password": "P@ssW0rd"
+                        }
+                        """))
+                .andReturn();
+
+        TokenPair tokenPair = objectMapper.readValue(result.getResponse().getContentAsString(), TokenPair.class);
+        return tokenPair;
+    }
+
+
     void shouldRejectWhenRefreshTokenIsInvalid() {}
     void shouldRejectWhenRefreshTokenIsExpired() {}
-    void shouldRejectWhenRefreshTokenIsAlreadyUsed() {}
+
 
 
 }
