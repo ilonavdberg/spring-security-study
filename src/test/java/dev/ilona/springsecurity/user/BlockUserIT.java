@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,7 +78,7 @@ public class BlockUserIT {
                         .username("internal-user")
                         .email("internal@email.com")
                         .userType(UserType.INTERNAL)
-                        .roles(List.of(roleService.getStandardUserRole()))
+                        .roles(List.of(roleService.getAdminRole()))
                         .authenticationMethod(AuthenticationMethod.PASSWORD)
                         .build()
         );
@@ -92,5 +93,26 @@ public class BlockUserIT {
     }
 
 
-    void shouldNotAllowNonAdminUserToBlockOtherUsers() {}
+    @Test
+    @WithMockUser(roles = "USER")
+    void shouldNotAllowNonAdminUserToBlockOtherUsers() {
+        User externalUser = userRepository.save(
+                User.builder()
+                        .username("external-user")
+                        .email("external@email.com")
+                        .userType(UserType.EXTERNAL)
+                        .roles(List.of(roleService.getStandardUserRole()))
+                        .authenticationMethod(AuthenticationMethod.PASSWORD)
+                        .build()
+        );
+
+        assertThatThrownBy(() -> userManagementService.blockUser(externalUser.getUuid()))
+                .isInstanceOf(AuthorizationDeniedException.class);
+
+        User updatedUser = userRepository.findByUuid(externalUser.getUuid())
+                .orElseThrow();
+
+        assertThat(updatedUser.isBlocked()).isFalse();
+
+    }
 }
