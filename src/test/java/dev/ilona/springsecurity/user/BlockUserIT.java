@@ -1,15 +1,15 @@
 package dev.ilona.springsecurity.user;
 
-import dev.ilona.springsecurity.api.user.UserRegistrationRequest;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
 import dev.ilona.springsecurity.config.TestDataInitializer;
+import dev.ilona.springsecurity.domain.user.AuthenticationMethod;
 import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserType;
+import dev.ilona.springsecurity.domain.user.role.RoleService;
 import dev.ilona.springsecurity.exception.exceptions.IllegalStateTransitionException;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,36 +41,29 @@ public class BlockUserIT {
     @Autowired
     UserRepository userRepository;
 
-    @BeforeEach
-    void setup() {
-        UserRegistrationRequest request = new UserRegistrationRequest(
-                "test-user",
-                "test-user@email.com",
-                "P@ssW0rd"
-        );
-
-        userManagementService.registerUser(request);
-    }
+    @Autowired
+    RoleService roleService;
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void shouldBlockUserSuccessfully() {
-        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
-                .orElseThrow();
+    void shouldBlockExternalUserSuccessfully() {
+        User externalUser = userRepository.save(
+                User.builder()
+                        .username("external-user")
+                        .email("external@email.com")
+                        .userType(UserType.EXTERNAL)
+                        .roles(List.of(roleService.getStandardUserRole()))
+                        .authenticationMethod(AuthenticationMethod.PASSWORD)
+                        .build()
+        );
 
-        assertThat(user).satisfies(u -> {
-            assertThat(u.isBlocked())
-                    .as("Precondition: user must not be blocked at start.")
-                    .isFalse();
-            assertThat(u.getUserType())
-                    .as("Precondition: user must be external.")
-                    .isEqualTo(UserType.EXTERNAL);
-        });
+        assertThat(externalUser.isBlocked())
+                .as("Precondition: user must not be blocked at start.")
+                .isFalse();
 
-        UUID userUuid = user.getUuid();
-        userManagementService.blockUser(userUuid);
+        userManagementService.blockUser(externalUser.getUuid());
 
-        User updatedUser = userRepository.findByUuid(userUuid)
+        User updatedUser = userRepository.findByUuid(externalUser.getUuid())
                 .orElseThrow();
 
         assertThat(updatedUser.isBlocked()).isTrue();
@@ -79,25 +72,23 @@ public class BlockUserIT {
     @Test
     @WithMockUser(roles = "ADMIN")
     void shouldNotBlockUserWhenUserIsInternal() {
-        entityManager.createNativeQuery("""
-                    UPDATE users
-                    SET user_type = :type
-                    WHERE username = 'test-user'
-                """)
-                .setParameter("type", UserType.INTERNAL.name())
-                .executeUpdate();
+        User internalUser = userRepository.save(
+                User.builder()
+                        .username("internal-user")
+                        .email("internal@email.com")
+                        .userType(UserType.INTERNAL)
+                        .roles(List.of(roleService.getStandardUserRole()))
+                        .authenticationMethod(AuthenticationMethod.PASSWORD)
+                        .build()
+        );
 
-        entityManager.flush();
-        entityManager.clear();
-
-        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
-                .orElseThrow();
-        UUID userUuid = user.getUuid();
-
-        assertThatThrownBy(() -> userManagementService.blockUser(userUuid))
+        assertThatThrownBy(() -> userManagementService.blockUser(internalUser.getUuid()))
                 .isInstanceOf(IllegalStateTransitionException.class);
 
-        assertThat(user.isBlocked()).isFalse();
+        User updatedUser = userRepository.findByUuid(internalUser.getUuid())
+                        .orElseThrow();
+
+        assertThat(updatedUser.isBlocked()).isFalse();
     }
 
 

@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Domain entity representing a system user.
+ *
+ * <p>Users should normally be created through {@link UserService} to ensure all registration policies are applied.</p>
+ */
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -71,7 +76,7 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
 
-    @Builder(access = AccessLevel.PACKAGE)
+    @Builder(access = AccessLevel.PUBLIC)
     public User(AuthenticationMethod authenticationMethod, String username, String password, String email, UserType userType, List<Role> roles) {
         setAuthenticationMethod(authenticationMethod);
         setUsername(username);
