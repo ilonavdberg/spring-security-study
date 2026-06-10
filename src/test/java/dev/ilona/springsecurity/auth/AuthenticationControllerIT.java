@@ -227,6 +227,25 @@ public class AuthenticationControllerIT {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void shouldRejectTokenRefreshByDeletedUser() throws Exception {
+        TokenPair tokenPair = loginAndGetTokenPair();
+
+        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
+                .orElseThrow();
+
+        user.delete();
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "token": "%s"
+                        }
+                        """.formatted(tokenPair.refreshToken())))
+                .andExpect(status().isUnauthorized());
+    }
+
     private TokenPair loginAndGetTokenPair() throws Exception {
         MvcResult result = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
