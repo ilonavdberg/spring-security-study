@@ -40,9 +40,16 @@ public class RefreshTokenService {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new BadCredentialsException("Invalid refresh token."));
 
-
         if (refreshToken.isExpired()) {
             throw new BadCredentialsException("Refresh token expired.");
+        }
+
+        if (refreshToken.getUser().isDeleted()) {
+            throw new BadCredentialsException("User account is deleted");
+        }
+
+        if (refreshToken.getUser().isBlocked()) {
+            throw new BadCredentialsException("User account is blocked.");
         }
 
         return refreshToken;

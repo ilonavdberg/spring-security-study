@@ -94,7 +94,7 @@ public class AuthenticationControllerIT {
     }
 
     @Test
-    void shouldRejectBlockedUserLogin() throws Exception {
+    void shouldRejectLoginByBlockedUser() throws Exception {
         User user = userRepository.findByUsernameAndDeletedFalse("test-user")
                 .orElseThrow();
 
@@ -112,7 +112,7 @@ public class AuthenticationControllerIT {
     }
 
     @Test
-    void shouldRejectDeletedUserLogin() throws Exception {
+    void shouldRejectLoginByDeletedUser() throws Exception {
         User user = userRepository.findByUsernameAndDeletedFalse("test-user")
                 .orElseThrow();
 
@@ -197,6 +197,25 @@ public class AuthenticationControllerIT {
 
         entityManager.flush();
         entityManager.clear();
+
+        mockMvc.perform(post("/auth/refresh")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                        {
+                            "token": "%s"
+                        }
+                        """.formatted(tokenPair.refreshToken())))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void shouldRejectTokenRefreshByBlockedUser() throws Exception {
+        TokenPair tokenPair = loginAndGetTokenPair();
+
+        User user = userRepository.findByUsernameAndDeletedFalse("test-user")
+                .orElseThrow();
+
+        user.block();
 
         mockMvc.perform(post("/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -36,10 +36,10 @@ public class AuthenticationService {
     public TokenPair refresh(String token) {
         RefreshToken refreshToken = refreshTokenService.resolve(token);
 
-        TokenPair tokens = createTokenPair(refreshToken.getUser());
+        TokenPair tokenPair = createTokenPair(refreshToken.getUser());
         refreshTokenRepository.delete(refreshToken); // Refresh tokens are single-use
 
-        return tokens;
+        return tokenPair;
     }
 
     private TokenPair createTokenPair(User user) {
