@@ -31,7 +31,6 @@ public class User {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @NotNull(message = "UUID is a required field.")
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
     private UUID uuid = UUID.randomUUID();
 

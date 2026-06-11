@@ -18,17 +18,17 @@ public class EmailService {
     private static final String GENERAL_INBOX = "info";
 
     @Async
-    public void sendInviteEmail(String email, String token) {
+    public void sendEmail(String email, String token) {
         EmailCommand emailCommand = new EmailCommand(
-                emailForInbox(GENERAL_INBOX),
+                toEmailAddress(GENERAL_INBOX),
                 email,
                 "You're invited to register",
-                buildInviteBody(token)
+                buildEmailBody(token)
         );
         emailSender.sendEmail(emailCommand);
     }
 
-    private String buildInviteBody(String token) {
+    private String buildEmailBody(String token) {
         return """
                 Hello,
 
@@ -38,7 +38,7 @@ public class EmailService {
                 """.formatted(token);
     }
 
-    private String emailForInbox(String inbox) {
+    private String toEmailAddress(String inbox) {
         return inbox + "@" + emailDomain;
     }
 }

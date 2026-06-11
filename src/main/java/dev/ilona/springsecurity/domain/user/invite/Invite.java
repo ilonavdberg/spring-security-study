@@ -11,6 +11,7 @@ import lombok.*;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "invites")
@@ -21,7 +22,11 @@ public class Invite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    UUID uuid = UUID.randomUUID();
 
     @NotNull(message = "Status is a required field.")
     Status status;

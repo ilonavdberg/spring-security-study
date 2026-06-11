@@ -68,13 +68,4 @@ public class UserManagementService {
         );
         return user.getUuid();
     }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public void createAndSendInviteForAdmin(String email) {
-        Invite invite = inviteService.createInvite(email, roleService.getAdminRole());
-
-        invite.validateAllowedToSend();
-        emailService.sendInviteEmail(invite.getEmail(), invite.getToken());
-        invite.markAsSent();
-    }
 }

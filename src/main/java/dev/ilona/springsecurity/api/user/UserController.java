@@ -30,7 +30,7 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/{uuid}/block")
+    @PostMapping("/{uuid}/block")
     public ResponseEntity<Void> block(@PathVariable UUID uuid) {
         userManagementService.blockUser(uuid);
         return ResponseEntity.ok().build();

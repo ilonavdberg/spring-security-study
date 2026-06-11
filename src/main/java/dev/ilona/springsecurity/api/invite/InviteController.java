@@ -1,5 +1,6 @@
 package dev.ilona.springsecurity.api.invite;
 
+import dev.ilona.springsecurity.application.user.InviteManagementService;
 import dev.ilona.springsecurity.application.user.UserManagementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,29 @@ import java.util.UUID;
 public class InviteController {
 
     private final UserManagementService userManagementService;
+    private final InviteManagementService inviteManagementService;
 
     @PostMapping
-    public ResponseEntity<Void> sendInvite(@Valid @RequestBody SendInviteRequest request) {
-        userManagementService.createAndSendInviteForAdmin(request.email());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> create(@Valid @RequestBody CreateInviteRequest request) {
+        UUID uuid = inviteManagementService.createInviteForAdminUser(request.email());
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/invites/{uuid}")
+                .buildAndExpand(uuid)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("{uuid}/send")
+    public ResponseEntity<Void> send(@PathVariable UUID uuid) {
+        inviteManagementService.sendInvite(uuid);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{token}/accept")
-    public ResponseEntity<Void> acceptInvite(@PathVariable String token, @Valid @RequestBody AcceptInviteRequest request) {
+    public ResponseEntity<Void> accept(@PathVariable String token, @Valid @RequestBody AcceptInviteRequest request) {
         UUID uuid = userManagementService.createUserFromInvite(request.email(), request.password(), token);
 
         URI location = ServletUriComponentsBuilder
