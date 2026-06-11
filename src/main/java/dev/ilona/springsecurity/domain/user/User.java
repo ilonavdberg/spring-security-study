@@ -95,7 +95,7 @@ public class User {
         }
 
         if (userType.isInternal()) {
-            throw new IllegalStateTransitionException("Internal users cannot be blocked.");
+            throw new PolicyViolationException("Internal users cannot be blocked.");
         }
 
         setStatus(Status.BLOCKED);

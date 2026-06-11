@@ -8,7 +8,7 @@ import dev.ilona.springsecurity.domain.user.User;
 import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
-import dev.ilona.springsecurity.exception.exceptions.IllegalStateTransitionException;
+import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class BlockUserIT {
         );
 
         assertThatThrownBy(() -> userManagementService.blockUser(internalUser.getUuid()))
-                .isInstanceOf(IllegalStateTransitionException.class);
+                .isInstanceOf(PolicyViolationException.class);
 
         User updatedUser = userRepository.findByUuid(internalUser.getUuid())
                         .orElseThrow();

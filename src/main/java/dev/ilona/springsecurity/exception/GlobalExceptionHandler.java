@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PolicyViolationException.class)
     public ProblemDetail handlePolicyViolationException(PolicyViolationException exception, HttpServletRequest request) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, exception.getMessage());
         problemDetail.setTitle("Business rule violation");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateTransitionException.class)
     public ProblemDetail handleIllegalStateTransitionException(IllegalStateTransitionException exception, HttpServletRequest request) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.getMessage());
-        problemDetail.setTitle("Illegal state transition");
+        problemDetail.setTitle("Resource state conflict");
         problemDetail.setInstance(URI.create(request.getRequestURI()));
         return problemDetail;
     }
