@@ -17,8 +17,10 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,8 +34,10 @@ public class RegisterUserControllerTest {
     @MockitoBean
     private UserManagementService userManagementService;
 
+    // register user tests
+
     @Test
-    void shouldReturn201AndLocationHeader() throws Exception {
+    void shouldReturn201AndLocationHeaderWhenUserIsRegistered() throws Exception {
         UUID uuid = UUID.randomUUID();
         when(userManagementService.registerUser(any()))
                 .thenReturn(uuid);
@@ -126,6 +130,18 @@ public class RegisterUserControllerTest {
                 "NoNumber!",
                 "NoSpecialChar1"
         );
+    }
+
+    // block user tests
+
+    @Test
+    void shouldReturn204WhenUserIsBlocked() throws Exception {
+        UUID uuid = UUID.randomUUID();
+
+        mockMvc.perform(put("/api/users/{uuid}/block", uuid))
+                .andExpect(status().isNoContent());
+
+        verify(userManagementService).blockUser(uuid);
     }
 
 }
