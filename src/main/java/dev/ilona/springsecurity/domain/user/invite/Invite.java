@@ -61,8 +61,8 @@ public class Invite {
         setStatus(Status.NEW);
     }
 
-    public void validateAllowedToSend() {
-        if (this.status != Status.NEW) {
+    public void assertCanBeSent() {
+        if (this.status == Status.ACCEPTED || this.status == Status.REVOKED) {
             throw new IllegalStateTransitionException("This invite is not in a valid state to be send.");
         }
     }

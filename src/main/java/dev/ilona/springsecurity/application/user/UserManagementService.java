@@ -10,7 +10,7 @@ import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
 import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
-import dev.ilona.springsecurity.utils.EmailService;
+import dev.ilona.springsecurity.infrastructure.email.EmailService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
