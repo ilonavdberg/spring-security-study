@@ -1,4 +1,6 @@
-package dev.ilona.springsecurity.infrastructure.email;
+package dev.ilona.springsecurity.config.email;
+
+import dev.ilona.springsecurity.infrastructure.email.EmailCommand;
 
 public final class EmailTemplate {
 
