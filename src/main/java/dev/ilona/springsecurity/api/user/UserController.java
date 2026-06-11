@@ -33,6 +33,6 @@ public class UserController {
     @PostMapping("/{uuid}/block")
     public ResponseEntity<Void> block(@PathVariable UUID uuid) {
         userManagementService.blockUser(uuid);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

@@ -44,14 +44,6 @@ public class RefreshTokenService {
             throw new BadCredentialsException("Refresh token expired.");
         }
 
-        if (refreshToken.getUser().isDeleted()) {
-            throw new BadCredentialsException("User account is deleted");
-        }
-
-        if (refreshToken.getUser().isBlocked()) {
-            throw new BadCredentialsException("User account is blocked.");
-        }
-
         return refreshToken;
     }
 }

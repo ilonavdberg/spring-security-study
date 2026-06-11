@@ -138,7 +138,7 @@ public class RegisterUserControllerTest {
     void shouldReturn204WhenUserIsBlocked() throws Exception {
         UUID uuid = UUID.randomUUID();
 
-        mockMvc.perform(put("/api/users/{uuid}/block", uuid))
+        mockMvc.perform(post("/api/users/{uuid}/block", uuid))
                 .andExpect(status().isNoContent());
 
         verify(userManagementService).blockUser(uuid);
