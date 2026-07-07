@@ -3,6 +3,7 @@ package dev.ilona.springsecurity.domain.user.invite;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.policies.EmailPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
+import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.utils.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,6 +27,10 @@ public class InviteService {
     private int tokenByteLength;
 
     public Invite create(String email, Role role) {
+        if (inviteRepository.findActiveInviteByEmail(email).isPresent()) {
+            throw new DuplicateEntryException("An invite already exists for email: %s.".formatted(email));
+        }
+
         emailPolicy.validate(email, UserType.INTERNAL);
 
         Invite invite = Invite.builder()

@@ -9,9 +9,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "invites")
@@ -85,6 +83,10 @@ public class Invite {
 
 
     public enum Status {
-        NEW, SENT, ACCEPTED, REVOKED
+        NEW, SENT, ACCEPTED, REVOKED;
+
+        public static Set<Status> activeStatuses() {
+            return EnumSet.of(NEW, SENT);
+        }
     }
 }
