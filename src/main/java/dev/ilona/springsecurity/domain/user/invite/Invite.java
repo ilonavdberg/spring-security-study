@@ -84,7 +84,7 @@ public class Invite {
     }
 
 
-    private enum Status {
+    public enum Status {
         NEW, SENT, ACCEPTED, REVOKED
     }
 }

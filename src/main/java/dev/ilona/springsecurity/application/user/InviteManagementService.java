@@ -29,7 +29,7 @@ public class InviteManagementService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public UUID createInviteForAdminUser(String email) {
-        Invite invite = inviteService.createInvite(email, roleService.getAdminRole());
+        Invite invite = inviteService.create(email, roleService.getAdminRole());
         return invite.getUuid();
     }
 

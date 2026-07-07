@@ -1,6 +1,5 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
-import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.policies.EmailPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
@@ -17,7 +16,6 @@ import java.time.Instant;
 public class InviteService {
 
     private final InviteRepository inviteRepository;
-    private final UserService userService;
     private final TokenGenerator tokenGenerator;
     private final EmailPolicy emailPolicy;
 
@@ -27,7 +25,7 @@ public class InviteService {
     @Value("${security.invite.token.byte-length}")
     private int tokenByteLength;
 
-    public Invite createInvite(String email, Role role) {
+    public Invite create(String email, Role role) {
         emailPolicy.validate(email, UserType.INTERNAL);
 
         Invite invite = Invite.builder()
