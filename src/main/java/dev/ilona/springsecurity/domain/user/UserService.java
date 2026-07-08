@@ -1,8 +1,7 @@
 package dev.ilona.springsecurity.domain.user;
 
-import dev.ilona.springsecurity.domain.user.policies.EmailPolicy;
+import dev.ilona.springsecurity.domain.user.policies.UserAccountPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
-import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailPolicy emailPolicy;
+    private final UserAccountPolicy userAccountPolicy;
 
     /**
      * Creates a new user with password-based authentication.
@@ -52,7 +51,8 @@ public class UserService {
     }
 
     private User createUser(AuthenticationMethod authenticationMethod, String username, String rawPassword, String email, UserType userType, List<Role> roles) {
-        emailPolicy.validate(email, userType);
+        userAccountPolicy.ensureUsernameIsAvailable(username);
+        userAccountPolicy.validateEmailForNewUser(email, userType);
 
         String password = switch (authenticationMethod) {
             case PASSWORD -> {
@@ -64,13 +64,6 @@ public class UserService {
                 yield null;
             }
         };
-
-        if (userRepository.existsByUsername(username)) {
-            throw new DuplicateEntryException("Username already exists: " + username);
-        }
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicateEntryException("Email address is already in use: " + email);
-        }
 
         User user = User.builder()
                 .authenticationMethod(authenticationMethod)

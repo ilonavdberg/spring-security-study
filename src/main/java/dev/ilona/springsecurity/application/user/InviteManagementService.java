@@ -1,13 +1,14 @@
 package dev.ilona.springsecurity.application.user;
 
 import dev.ilona.springsecurity.domain.user.UserRepository;
+import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.invite.InviteService;
+import dev.ilona.springsecurity.domain.user.policies.UserAccountPolicy;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
 import dev.ilona.springsecurity.config.email.Mailboxes;
 import dev.ilona.springsecurity.config.email.Mailbox;
-import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.infrastructure.email.EmailService;
 import dev.ilona.springsecurity.config.email.EmailTemplate;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,15 +28,13 @@ public class InviteManagementService {
     private final InviteRepository inviteRepository;
     private final RoleService roleService;
     private final EmailService emailService;
+    private final UserAccountPolicy userAccountPolicy;
     private final UserRepository userRepository;
     private final Mailboxes mailboxes;
 
     @PreAuthorize("hasRole('ADMIN')")
     public UUID createInviteForAdminUser(String email) {
-        if (userRepository.existsByEmail(email)) {
-            throw new DuplicateEntryException("Email address is already in use: " + email);
-        }
-
+        userAccountPolicy.validateEmailForNewUser(email, UserType.INTERNAL);
         Invite invite = inviteService.create(email, roleService.getAdminRole());
         return invite.getUuid();
     }
