@@ -7,10 +7,8 @@ import dev.ilona.springsecurity.domain.user.UserService;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
-import dev.ilona.springsecurity.domain.user.invite.InviteService;
-import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenRepository;
+import dev.ilona.springsecurity.domain.user.refreshtoken.RefreshTokenService;
 import dev.ilona.springsecurity.domain.user.role.RoleService;
-import dev.ilona.springsecurity.infrastructure.email.EmailService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,11 +25,9 @@ public class UserManagementService {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final InviteService inviteService;
     private final UserRepository userRepository;
     private final InviteRepository inviteRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final EmailService emailService;
+    private final RefreshTokenService refreshTokenService;
 
     public UUID registerUser(UserRegistrationRequest request) {
         User user = userService.createUser(
@@ -50,7 +46,7 @@ public class UserManagementService {
                 .orElseThrow(() -> new EntityNotFoundException("No user found with uuid: " + uuid));
 
         user.block();
-        refreshTokenRepository.deleteAllByUser(user);
+        refreshTokenService.revokeAll(user);
     }
 
     public UUID createUserFromInvite(String email, String password, String token) {

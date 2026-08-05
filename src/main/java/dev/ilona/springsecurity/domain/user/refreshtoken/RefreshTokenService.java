@@ -23,7 +23,7 @@ public class RefreshTokenService {
     @Value("${security.jwt.refresh-token.byte-length}")
     private int tokenByteLength;
 
-    public RefreshToken createFor(User user) {
+    public RefreshToken create(User user) {
         String token = tokenGenerator.generate(tokenByteLength);
         Instant expirationDate = Instant.now().plus(validPeriod);
 
@@ -34,6 +34,10 @@ public class RefreshTokenService {
                 .build();
 
         return refreshTokenRepository.save(refreshToken);
+    }
+
+    public void revokeAll(User user) {
+        refreshTokenRepository.deleteAllByUser(user);
     }
 
     public RefreshToken resolve(String token) {
