@@ -1,11 +1,14 @@
 package dev.ilona.springsecurity.invite;
 
 import dev.ilona.springsecurity.application.user.InviteManagementService;
+import dev.ilona.springsecurity.application.user.UserManagementService;
 import dev.ilona.springsecurity.config.PostgresTestContainerConfig;
 import dev.ilona.springsecurity.config.TestDataInitializer;
+import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
 import dev.ilona.springsecurity.domain.user.role.Role;
+import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.exception.exceptions.PolicyViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,13 @@ public class CreateInviteIT {
     private InviteManagementService inviteManagementService;
 
     @Autowired
+    private UserManagementService userManagementService;
+
+    @Autowired
     InviteRepository inviteRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Value("${application.email.domain}")
     private String internalEmailDomain;
@@ -74,12 +83,32 @@ public class CreateInviteIT {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    public void shouldNotCreateInviteForExternalEmailAddress() {
+    public void shouldRejectInviteCreationForExternalEmailAddress() {
         assertThatThrownBy(() -> inviteManagementService.createInviteForAdminUser("test@external-domain.com"))
                 .isInstanceOf(PolicyViolationException.class)
                 .hasMessageMatching("(?i).*email.*")
                 .hasMessageMatching("(?i).*internal.*");
     }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void shouldRejectInviteCreationForExistingUserEmail() {
+        String email = validInternalEmail();
+
+        UUID inviteUuid = inviteManagementService.createInviteForAdminUser(email);
+        Invite invite = inviteRepository.findByUuid(inviteUuid)
+                .orElseThrow();
+        invite.markAsSent();
+        UUID userUuid = userManagementService.createUserFromInvite(email, "P@ssW0rd", invite.getToken());
+
+        assertThat(userRepository.findByUuid(userUuid)).isPresent(); //verify test setup was successful
+
+        assertThatThrownBy(() -> inviteManagementService.createInviteForAdminUser(email))
+                .isInstanceOf(DuplicateEntryException.class);
+    }
+
+    //TODO: add exception flow tests
+    public void shouldRejectInviteCreationWhenActiveInviteAlreadyExists() {}
 
     private String validInternalEmail() {
         return "test@" + internalEmailDomain;
