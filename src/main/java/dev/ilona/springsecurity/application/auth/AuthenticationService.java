@@ -43,7 +43,7 @@ public class AuthenticationService {
     }
 
     private TokenPair createTokenPair(User user) {
-        String refreshToken = refreshTokenService.createFor(user).getToken();
+        String refreshToken = refreshTokenService.create(user).getToken();
         String accessToken = jwtService.generateToken(user);
         return TokenPair.of(refreshToken, accessToken);
     }

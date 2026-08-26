@@ -1,6 +1,5 @@
 package dev.ilona.springsecurity.application.user;
 
-import dev.ilona.springsecurity.domain.user.UserRepository;
 import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.invite.Invite;
 import dev.ilona.springsecurity.domain.user.invite.InviteRepository;
@@ -29,7 +28,6 @@ public class InviteManagementService {
     private final RoleService roleService;
     private final EmailService emailService;
     private final UserAccountPolicy userAccountPolicy;
-    private final UserRepository userRepository;
     private final Mailboxes mailboxes;
 
     @PreAuthorize("hasRole('ADMIN')")

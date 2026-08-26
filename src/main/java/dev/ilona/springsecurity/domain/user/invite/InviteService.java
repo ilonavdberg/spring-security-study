@@ -1,6 +1,5 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
-import dev.ilona.springsecurity.domain.user.UserType;
 import dev.ilona.springsecurity.domain.user.policies.UserAccountPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
