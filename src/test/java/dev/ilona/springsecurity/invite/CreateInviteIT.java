@@ -107,8 +107,19 @@ public class CreateInviteIT {
                 .isInstanceOf(DuplicateEntryException.class);
     }
 
-    //TODO: add exception flow tests
-    public void shouldRejectInviteCreationWhenActiveInviteAlreadyExists() {}
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void shouldRejectInviteCreationWhenActiveInviteAlreadyExists() {
+        String email = validInternalEmail();
+
+        UUID uuid = inviteManagementService.createInviteForAdminUser(email);
+        assertThat(inviteRepository.findByUuid(uuid).isPresent());
+
+        assertThatThrownBy(() -> inviteManagementService.createInviteForAdminUser(email))
+                .isInstanceOf(DuplicateEntryException.class)
+                .hasMessageContaining("invite")
+                .hasMessageContaining("email");
+    }
 
     private String validInternalEmail() {
         return "test@" + internalEmailDomain;
