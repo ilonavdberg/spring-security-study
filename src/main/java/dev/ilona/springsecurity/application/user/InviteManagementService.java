@@ -44,7 +44,7 @@ public class InviteManagementService {
 
         invite.assertCanBeSent();
         emailService.sendEmail(EmailTemplate.invite(
-                mailboxes.addressOf(Mailbox.GENERAL),
+                mailboxes.addressOf(Mailbox.NO_REPLY),
                 invite.getEmail(),
                 invite.getToken()
         ));
