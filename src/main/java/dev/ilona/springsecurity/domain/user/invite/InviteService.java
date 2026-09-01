@@ -1,6 +1,5 @@
 package dev.ilona.springsecurity.domain.user.invite;
 
-import dev.ilona.springsecurity.domain.user.policies.UserAccountPolicy;
 import dev.ilona.springsecurity.domain.user.role.Role;
 import dev.ilona.springsecurity.exception.exceptions.DuplicateEntryException;
 import dev.ilona.springsecurity.utils.TokenGenerator;
@@ -17,7 +16,6 @@ public class InviteService {
 
     private final InviteRepository inviteRepository;
     private final TokenGenerator tokenGenerator;
-    private final UserAccountPolicy userAccountPolicy;
 
     @Value("${security.invite.token.valid-period}")
     private Duration validPeriod;
