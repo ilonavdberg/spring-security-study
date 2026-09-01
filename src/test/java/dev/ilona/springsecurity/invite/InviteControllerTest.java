@@ -46,7 +46,7 @@ public class InviteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
-                            "email": %s
+                            "email": "%s"
                         }
                         """.formatted(email)))
                 .andExpect(status().isCreated())
@@ -55,6 +55,7 @@ public class InviteControllerTest {
                         "http://localhost/api/invites/" + uuid
                 ));
     }
+
     @ParameterizedTest
     @MethodSource("invalidEmails")
     void shouldReturn400WhenEmailFormatIsInvalid(String email) throws Exception {
