@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class RegisterUserControllerTest {
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -82,7 +82,7 @@ public class RegisterUserControllerTest {
 
     @ParameterizedTest
     @MethodSource("invalidEmails")
-    void shouldReturn400WhenEmailIsInvalid(String email) throws Exception {
+    void shouldReturn400WhenEmailFormatIsInvalid(String email) throws Exception {
         mockMvc.perform(post("/api/users/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -100,7 +100,9 @@ public class RegisterUserControllerTest {
                 "",
                 "text",
                 "@domain.com",
-                "user@"
+                "user@",
+                "user@@domain.com",
+                null
         );
     }
 
